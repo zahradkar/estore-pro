@@ -3,9 +3,8 @@ package eu.martin.store.product;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static eu.martin.store.product.MeasureUnit.PIECE;
+import static eu.martin.store.product.MeasureUnit.UNIT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class ProductMapperTest {
     private final ProductMapper mapper = new ProductMapperImpl();
@@ -16,8 +15,8 @@ class ProductMapperTest {
         var description = "description";
         var sellPrice = 35.2f;
         var quantity = 54.0f;
-        var unit = PIECE;
-        var request = new ProductRequest(name, description, sellPrice, quantity, unit);
+        var unit = UNIT;
+        var request = new ProductRegisterDto(name, description, sellPrice, quantity, unit);
 
         var result = mapper.toEntity(request);
 
@@ -34,8 +33,8 @@ class ProductMapperTest {
         var name = "name";
         var description = "description";
         var sellPrice = 35.2f;
-        var quantity = 54.0f;
-        var unit = PIECE;
+        short quantity = 54;
+        var unit = UNIT;
         var product = new Product();
         ReflectionTestUtils.setField(product, "id", id);
         product.setDescription(description);

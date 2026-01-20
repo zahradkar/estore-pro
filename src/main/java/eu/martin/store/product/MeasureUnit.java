@@ -8,9 +8,9 @@ import lombok.Getter;
 enum MeasureUnit {
     KILOGRAM("KG"),
     METRE("M"),
-    LITRE("L"),
-    PIECE("KS"),
-    SECOND("SEK"),
+    LITER("L"),
+    UNIT("KS"),
+//    SECOND("SEK"),
     PACKAGE("BAL");
 
     private final String code;

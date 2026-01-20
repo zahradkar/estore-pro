@@ -1,6 +1,6 @@
 package eu.martin.store.product;
 
-record ProductRequest(
+record ProductUpdateDto(
         String name,
         String description,
         Float sellPrice,
