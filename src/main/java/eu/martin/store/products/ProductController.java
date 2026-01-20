@@ -1,4 +1,4 @@
-package eu.martin.store.product;
+package eu.martin.store.products;
 
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;

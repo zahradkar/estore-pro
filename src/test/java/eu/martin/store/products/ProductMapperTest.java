@@ -1,9 +1,11 @@
-package eu.martin.store.product;
+package eu.martin.store.products;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static eu.martin.store.product.MeasureUnit.UNIT;
+import java.math.BigDecimal;
+
+import static eu.martin.store.products.MeasureUnit.UNIT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class ProductMapperTest {
@@ -13,17 +15,15 @@ class ProductMapperTest {
     void toEntity() {
         var name = "name";
         var description = "description";
-        var sellPrice = 35.2f;
-        var quantity = 54.0f;
+        var sellPrice = BigDecimal.valueOf(35.2);
         var unit = UNIT;
-        var request = new ProductRegisterDto(name, description, sellPrice, quantity, unit);
+        var request = new ProductRegisterDto(name, description, sellPrice, unit);
 
         var result = mapper.toEntity(request);
 
         assertEquals(name, result.getName());
         assertEquals(description, result.getDescription());
         assertEquals(sellPrice, result.getSellPrice());
-        assertEquals(quantity, result.getQuantity());
         assertEquals(unit, result.getMeasureUnit());
     }
 
@@ -32,7 +32,7 @@ class ProductMapperTest {
         var id = 4;
         var name = "name";
         var description = "description";
-        var sellPrice = 35.2f;
+        var sellPrice = BigDecimal.valueOf(35.2);
         short quantity = 54;
         var unit = UNIT;
         var product = new Product();

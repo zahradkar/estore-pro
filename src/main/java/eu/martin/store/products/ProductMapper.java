@@ -1,4 +1,4 @@
-package eu.martin.store.product;
+package eu.martin.store.products;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;

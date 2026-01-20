@@ -1,4 +1,4 @@
-package eu.martin.store.product;
+package eu.martin.store.products;
 
 record ProductUpdateDto(
         String name,

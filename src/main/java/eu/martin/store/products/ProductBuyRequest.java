@@ -1,4 +1,4 @@
-package eu.martin.store.product;
+package eu.martin.store.products;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

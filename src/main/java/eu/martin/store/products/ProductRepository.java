@@ -1,4 +1,4 @@
-package eu.martin.store.product;
+package eu.martin.store.products;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

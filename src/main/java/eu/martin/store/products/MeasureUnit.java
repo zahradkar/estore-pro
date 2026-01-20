@@ -1,4 +1,4 @@
-package eu.martin.store.product;
+package eu.martin.store.products;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

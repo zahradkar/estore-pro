@@ -1,7 +1,7 @@
-package eu.martin.store.product;
+package eu.martin.store.products;
 
-import eu.martin.store.buyhistory.BuyInfoMapper;
-import eu.martin.store.buyhistory.BuyInfoRepository;
+import eu.martin.store.buyhistory.BuyHistoryMapper;
+import eu.martin.store.buyhistory.BuyHistoryRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,9 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 class ProductService {
     private ProductRepository productRepository;
-    private BuyInfoRepository buyInfoRepository;
+    private BuyHistoryRepository buyHistoryRepository;
     private ProductMapper productMapper;
-    private BuyInfoMapper buyInfoMapper;
+    private BuyHistoryMapper buyHistoryMapper;
 
     ProductResponse registerNewProduct(ProductRegisterDto dto) {
         var savedProduct = productRepository.save(productMapper.toEntity(dto));
@@ -27,11 +27,11 @@ class ProductService {
         var product = getProduct(id);
         product.increaseQuantity(dto.quantity());
 
-        var buyInfo = buyInfoMapper.toEntity(dto);
-        buyInfo.setProduct(product);
-        buyInfo = buyInfoRepository.save(buyInfo);
+        var buyHistory = buyHistoryMapper.toEntity(dto);
+        buyHistory.setProduct(product);
+        buyHistory = buyHistoryRepository.save(buyHistory);
 
-        return new ProductBuyResponse(product.getId(), product.getName(), product.getQuantity(), buyInfo.getBuyPrice(), buyInfo.getSupplier());
+        return new ProductBuyResponse(product.getId(), product.getName(), product.getQuantity(), buyHistory.getBuyPrice(), buyHistory.getSupplier());
     }
 
     ProductResponse getProductById(Integer id) {

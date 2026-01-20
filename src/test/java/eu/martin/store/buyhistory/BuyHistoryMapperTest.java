@@ -1,19 +1,21 @@
 package eu.martin.store.buyhistory;
 
-import eu.martin.store.product.ProductBuyRequest;
+import eu.martin.store.products.ProductBuyRequest;
 import org.junit.jupiter.api.Test;
+
+import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class BuyInfoMapperTest {
+class BuyHistoryMapperTest {
 
-    private final BuyInfoMapper mapper = new BuyInfoMapperImpl();
+    private final BuyHistoryMapper mapper = new BuyHistoryMapperImpl();
 
     @Test
     void toEntity() {
         short quantity = 843;
-        var buyPrice = 593.23f;
+        var buyPrice = BigDecimal.valueOf(593.23);
         var supplier = "a supplier";
         var dto = new ProductBuyRequest(quantity, buyPrice, supplier);
 
