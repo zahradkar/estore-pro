@@ -5,20 +5,22 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.math.BigDecimal;
+
 @Getter
 @Entity
 @Table(name = "products")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
     @Setter
     @Column(nullable = false)
     private String name;
     @Setter
     private String description;
     @Setter
-    private Float sellPrice;
+    private BigDecimal sellPrice;
     @Setter
     @ColumnDefault("0")
     private short quantity;

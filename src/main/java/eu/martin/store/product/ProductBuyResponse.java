@@ -1,10 +1,12 @@
 package eu.martin.store.product;
 
+import java.math.BigDecimal;
+
 record ProductBuyResponse(
         int id,
         String name,
-        float newQuantity,
-        float lastBuyPrice,
+        short newQuantity,
+        BigDecimal lastBuyPrice,
         String lastSupplier
 ) {
 }

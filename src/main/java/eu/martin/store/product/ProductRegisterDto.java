@@ -2,10 +2,11 @@ package eu.martin.store.product;
 
 import jakarta.validation.constraints.NotBlank;
 
+import java.math.BigDecimal;
+
 record ProductRegisterDto(
         @NotBlank String name,
         String description,
-        Float sellPrice,
-        Float quantity,
+        BigDecimal sellPrice,
         MeasureUnit measureUnit) {
 }
