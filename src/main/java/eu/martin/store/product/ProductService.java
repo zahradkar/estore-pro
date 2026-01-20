@@ -1,7 +1,7 @@
 package eu.martin.store.product;
 
-import eu.martin.store.buyinfo.BuyInfoMapper;
-import eu.martin.store.buyinfo.BuyInfoRepository;
+import eu.martin.store.buyhistory.BuyInfoMapper;
+import eu.martin.store.buyhistory.BuyInfoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
