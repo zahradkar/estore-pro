@@ -1,6 +1,5 @@
-package eu.martin.store.buyhistory;
+package eu.martin.store.products;
 
-import eu.martin.store.products.ProductBuyRequest;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

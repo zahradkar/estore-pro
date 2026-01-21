@@ -1,4 +1,4 @@
-package eu.martin.store.buyhistory;
+package eu.martin.store.products;
 
 import eu.martin.store.products.Product;
 import jakarta.persistence.*;
@@ -13,7 +13,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Getter
 @Entity
 @Table(name = "buy_info")
-public class BuyHistory {
+class BuyHistory {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;

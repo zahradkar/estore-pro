@@ -1,8 +1,5 @@
 package eu.martin.store.products;
 
-import eu.martin.store.buyhistory.BuyHistory;
-import eu.martin.store.buyhistory.BuyHistoryMapper;
-import eu.martin.store.buyhistory.BuyHistoryRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
