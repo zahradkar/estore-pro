@@ -1,6 +1,5 @@
 package eu.martin.store.products;
 
-import eu.martin.store.products.Product;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +11,6 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Getter
 @Entity
-@Table(name = "buy_info")
 class BuyHistory {
     @Id
     @GeneratedValue(strategy = IDENTITY)

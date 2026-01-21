@@ -13,13 +13,17 @@ public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
-    private int id;
+    private Long id;
+
     @Setter
     private String street;
+
     @Setter
     private String city;
+
     @Setter
     private String zip;
+
     @Setter
     private String country;
 
