@@ -27,6 +27,10 @@ public class User {
     @Setter
     private String password;
 
+    @Setter
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @OneToMany(cascade = REMOVE)
     @JoinColumn(name = "user_id")
     private Set<Address> addresses = new HashSet<>();

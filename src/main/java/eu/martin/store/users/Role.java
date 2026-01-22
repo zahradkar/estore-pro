@@ -1,0 +1,5 @@
+package eu.martin.store.users;
+public enum Role {
+    USER,
+    ADMIN
+}

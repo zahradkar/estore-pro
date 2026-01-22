@@ -1,7 +1,6 @@
 package eu.martin.store.users;
 
-record UserResponse(
-        long id,
+record UpdateUserRequest(
         String name,
         String email
 ) {

@@ -2,5 +2,8 @@ package eu.martin.store.users;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-interface UserRepository extends JpaRepository<User, Integer> {
+import java.util.Optional;
+
+interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByEmail(String email);
 }

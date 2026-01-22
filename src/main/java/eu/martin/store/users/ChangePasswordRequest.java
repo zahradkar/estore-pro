@@ -1,6 +1,6 @@
 package eu.martin.store.users;
 
-public record ChangePasswordRequest(
+record ChangePasswordRequest(
         String oldPassword,
         String newPassword
 ) {
