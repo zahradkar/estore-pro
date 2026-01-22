@@ -1,4 +1,4 @@
-package eu.martin.store.common;
+package eu.martin.store.auth;
 
 import io.jsonwebtoken.security.Keys;
 import lombok.Data;

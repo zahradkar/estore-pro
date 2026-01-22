@@ -17,3 +17,5 @@ spring:
     refreshTokenExpiration: 604800 # 7d
 app:
   user-path: /api/users
+  admin-path: /api/admin
+  auth-path: /api/auth

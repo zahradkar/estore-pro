@@ -1,7 +1,7 @@
-package eu.martin.store.users;
+package eu.martin.store.auth;
 
-import eu.martin.store.common.Jwt;
-import eu.martin.store.common.JwtService;
+import eu.martin.store.users.User;
+import eu.martin.store.users.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

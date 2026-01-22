@@ -20,3 +20,5 @@ logging:
 
 app:
   user-path: /api/users
+  admin-path: /api/admin
+  auth-path: /api/auth

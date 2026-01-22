@@ -1,7 +1,7 @@
-package eu.martin.store.users;
+package eu.martin.store.auth;
 
-import eu.martin.store.common.JwtConfig;
-import eu.martin.store.common.JwtResponse;
+import eu.martin.store.users.UserMapper;
+import eu.martin.store.users.UserResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;

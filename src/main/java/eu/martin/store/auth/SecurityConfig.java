@@ -1,4 +1,4 @@
-package eu.martin.store.common;
+package eu.martin.store.auth;
 
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;

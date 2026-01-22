@@ -1,4 +1,4 @@
-package eu.martin.store.common;
+package eu.martin.store.auth;
 
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;

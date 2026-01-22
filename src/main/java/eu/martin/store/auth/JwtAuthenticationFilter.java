@@ -1,4 +1,4 @@
-package eu.martin.store.common;
+package eu.martin.store.auth;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

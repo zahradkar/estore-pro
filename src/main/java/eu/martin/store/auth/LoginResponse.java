@@ -1,6 +1,4 @@
-package eu.martin.store.users;
-
-import eu.martin.store.common.Jwt;
+package eu.martin.store.auth;
 
 record LoginResponse(
         Jwt accessToken,

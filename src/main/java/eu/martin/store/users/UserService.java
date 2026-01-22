@@ -17,6 +17,9 @@ class UserService {
     private final PasswordEncoder passwordEncoder;
 
     UserResponse registerUser(UserRequest dto) { // todo test
+        if (userRepository.existsByEmail(dto.email()))
+            throw new DuplicateUserException();
+
         var user = userMapper.toEntity(dto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(Role.USER);

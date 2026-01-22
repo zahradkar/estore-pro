@@ -1,4 +1,4 @@
-package eu.martin.store.common;
+package eu.martin.store.auth;
 
 import eu.martin.store.users.User;
 import io.jsonwebtoken.Claims;
@@ -9,13 +9,13 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 @Service
-public record JwtService(JwtConfig jwtConfig) {
+record JwtService(JwtConfig jwtConfig) {
 
-    public Jwt generateAccessToken(User user) {
+    Jwt generateAccessToken(User user) {
         return generateToken(user, jwtConfig.getAccessTokenExpiration());
     }
 
-    public Jwt generateRefreshToken(User user) {
+    Jwt generateRefreshToken(User user) {
         return generateToken(user, jwtConfig.getRefreshTokenExpiration());
     }
 
@@ -32,7 +32,7 @@ public record JwtService(JwtConfig jwtConfig) {
         return new Jwt(claims, jwtConfig.getSecretKey());
     }
 
-    public Jwt parseToken(String token) {
+    Jwt parseToken(String token) {
         try {
             var claims = getClaims(token);
             return new Jwt(claims, jwtConfig.getSecretKey());

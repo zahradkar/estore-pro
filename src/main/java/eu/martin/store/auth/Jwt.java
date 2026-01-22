@@ -1,4 +1,4 @@
-package eu.martin.store.common;
+package eu.martin.store.auth;
 
 import eu.martin.store.users.Role;
 import io.jsonwebtoken.Claims;
@@ -7,7 +7,7 @@ import io.jsonwebtoken.Jwts;
 import javax.crypto.SecretKey;
 import java.util.Date;
 
-public class Jwt {
+class Jwt {
     private final Claims claims;
     private final SecretKey secretKey;
 
@@ -16,11 +16,11 @@ public class Jwt {
         this.secretKey = secretKey;
     }
 
-    public boolean isExpired() {
+    boolean isExpired() {
         return claims.getExpiration().before(new Date());
     }
 
-    public Long getUserId() {
+    Long getUserId() {
         return Long.valueOf(claims.getSubject());
     }
 

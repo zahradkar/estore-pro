@@ -2,6 +2,7 @@ package eu.martin.store.common;
 
 import eu.martin.store.cart.ItemNotFoundException;
 import eu.martin.store.cart.QuantityExceedException;
+import eu.martin.store.users.DuplicateUserException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -37,6 +38,11 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(ItemNotFoundException.class)
     ResponseEntity<String> handleEntityNotFound(ItemNotFoundException ex) {
+        return ResponseEntity.status(BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(DuplicateUserException.class)
+    ResponseEntity<String> handleEntityNotFound(DuplicateUserException ex) {
         return ResponseEntity.status(BAD_REQUEST).body(ex.getMessage());
     }
 }
