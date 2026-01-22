@@ -38,7 +38,7 @@ record AuthController(JwtConfig jwtConfig, UserMapper userMapper, AuthService au
         if (user == null)
             return ResponseEntity.notFound().build();
 
-        var userResponse = userMapper.toResponse(user);
+        var userResponse = userMapper.toUserResponse(user);
         return ResponseEntity.ok(userResponse);
     }
 }

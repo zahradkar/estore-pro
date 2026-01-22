@@ -11,14 +11,14 @@ import org.springframework.stereotype.Service;
 @Service
 record AuthService(AuthenticationManager authenticationManager, UserRepository userRepository, JwtService jwtService) {
 
-    public User getCurrentUser() {
+    User getCurrentUser() {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         var userId = (Long) authentication.getPrincipal();
 
         return userRepository.findById(userId).orElse(null);
     }
 
-    public LoginResponse login(LoginRequest request) {
+    LoginResponse login(LoginRequest request) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.email(), request.password()));
 
         var user = userRepository.findByEmail(request.email()).orElseThrow();
@@ -28,7 +28,7 @@ record AuthService(AuthenticationManager authenticationManager, UserRepository u
         return new LoginResponse(accessToken, refreshToken);
     }
 
-    public Jwt refreshAccessToken(String refreshToken) {
+    Jwt refreshAccessToken(String refreshToken) {
         var jwt = jwtService.parseToken(refreshToken);
         if (jwt == null || jwt.isExpired())
             throw new BadCredentialsException("Invalid refresh token");

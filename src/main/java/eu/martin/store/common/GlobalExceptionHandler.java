@@ -4,7 +4,9 @@ import eu.martin.store.cart.ItemNotFoundException;
 import eu.martin.store.cart.QuantityExceedException;
 import eu.martin.store.users.DuplicateUserException;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -44,5 +46,10 @@ class GlobalExceptionHandler {
     @ExceptionHandler(DuplicateUserException.class)
     ResponseEntity<String> handleEntityNotFound(DuplicateUserException ex) {
         return ResponseEntity.status(BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Void> handleAccessDenied() {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 }

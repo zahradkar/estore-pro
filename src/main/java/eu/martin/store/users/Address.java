@@ -1,15 +1,18 @@
 package eu.martin.store.users;
 
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 @ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Getter
 @Entity
 @Table(name = "addresses")
 public class Address {
+    @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)

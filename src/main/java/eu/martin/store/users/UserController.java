@@ -21,7 +21,6 @@ class UserController {
 
     @PostMapping
     ResponseEntity<UserResponse> registerUser(@RequestBody @Valid UserRequest dto, UriComponentsBuilder uriBuilder) {
-        // todo test
         var response = service.registerUser(dto);
         var uri = uriBuilder.path(userPath + "/{id}").buildAndExpand(response.id()).toUri();
         return ResponseEntity.created(uri).body(response);
@@ -29,7 +28,6 @@ class UserController {
 
     @GetMapping("/{id}")
     ResponseEntity<UserResponse> getUser(@PathVariable @Valid @NotNull @Min(1) Integer id) {
-        // todo test
         return ResponseEntity.ok(service.getUser(id));
     }
 
@@ -52,5 +50,17 @@ class UserController {
     @PostMapping("/{id}/change-password")
     void changePassword(@PathVariable @Valid @NotNull @Min(1) Integer id, @RequestBody ChangePasswordRequest dto) {
         service.changePassword(id, dto);
+    }
+
+    @PostMapping("/{id}/profile")
+    ResponseEntity<ProfileResponse> createProfile(@PathVariable("id") Long userId, @RequestBody ProfileRequest dto, UriComponentsBuilder uriBuilder) {
+        var profileResponse = service.createProfile(userId, dto);
+        var uri = uriBuilder.path(userPath + "/{id}/profile").buildAndExpand(profileResponse.user().id()).toUri();
+        return ResponseEntity.created(uri).body(profileResponse);
+    }
+
+    @GetMapping("/{id}/profile")
+    ResponseEntity<ProfileResponse> getProfile(@PathVariable("id") Long userId) {
+        return ResponseEntity.ok(service.getProfile(userId));
     }
 }

@@ -34,8 +34,7 @@ record JwtService(JwtConfig jwtConfig) {
 
     Jwt parseToken(String token) {
         try {
-            var claims = getClaims(token);
-            return new Jwt(claims, jwtConfig.getSecretKey());
+            return new Jwt(getClaims(token), jwtConfig.getSecretKey());
         } catch (JwtException e) {
             return null;
         }

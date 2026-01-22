@@ -2,6 +2,7 @@ package eu.martin.store.users;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
@@ -10,22 +11,22 @@ import java.time.LocalDate;
 @Table(name = "profiles")
 public class Profile {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "bio")
+    @Setter
     private String bio;
 
-    @Column(name = "phone_number")
+    @Setter
     private String phoneNumber;
 
-    @Column(name = "date_of_birth")
+    @Setter
     private LocalDate dateOfBirth;
 
-    @Column(name = "loyalty_points")
+    @Setter
     private Integer loyaltyPoints;
 
+    @Setter
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id")
     @MapsId

@@ -15,20 +15,21 @@ class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
+    private final ProfileRepository profileRepository;
 
-    UserResponse registerUser(UserRequest dto) { // todo test
+    UserResponse registerUser(UserRequest dto) {
         if (userRepository.existsByEmail(dto.email()))
             throw new DuplicateUserException();
 
-        var user = userMapper.toEntity(dto);
+        var user = userMapper.toUserEntity(dto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(Role.USER);
         var registeredUser = userRepository.save(user);
-        return userMapper.toResponse(registeredUser);
+        return userMapper.toUserResponse(registeredUser);
     }
 
     UserResponse getUser(long id) {
-        return userMapper.toResponse(findUserById(id));
+        return userMapper.toUserResponse(findUserById(id));
     }
 
     private User findUserById(long id) {
@@ -41,7 +42,7 @@ class UserService {
 
         return userRepository.findAll(Sort.by(sortBy))
                 .stream()
-                .map(userMapper::toResponse)
+                .map(userMapper::toUserResponse)
                 .toList();
     }
 
@@ -50,12 +51,14 @@ class UserService {
         userMapper.update(dto, user);
         userRepository.save(user);
 
-        return userMapper.toResponse(user);
+        return userMapper.toUserResponse(user);
     }
 
     void deleteUser(long id) {
         if (!userRepository.existsById(id))
             throw new EntityNotFoundException("User id not found!");
+
+        profileRepository.deleteById(id);
         userRepository.deleteById(id);
     }
 
@@ -67,5 +70,15 @@ class UserService {
 
         user.setPassword(dto.newPassword());
         userRepository.save(user);
+    }
+
+    ProfileResponse createProfile(long userId, ProfileRequest dto) {
+        var profile = profileRepository.save(userMapper.toProfileEntity(dto, userId));
+        return userMapper.toProfileResponse(profile);
+    }
+
+    ProfileResponse getProfile(long userId) {
+        var profile = profileRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User id not found!"));
+        return userMapper.toProfileResponse(profile);
     }
 }

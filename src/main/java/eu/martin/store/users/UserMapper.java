@@ -5,9 +5,13 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
-    User toEntity(UserRequest dto);
+    User toUserEntity(UserRequest dto);
 
-    UserResponse toResponse(User user); // todo check if necessary public (used in AuthController)
+    UserResponse toUserResponse(User user);
 
     void update(UserRequest dto, @MappingTarget User user);
+
+    Profile toProfileEntity(ProfileRequest dto, long userId);
+
+    ProfileResponse toProfileResponse(Profile profile);
 }
