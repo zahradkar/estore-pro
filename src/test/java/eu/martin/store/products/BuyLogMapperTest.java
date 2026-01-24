@@ -7,9 +7,9 @@ import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-class BuyHistoryMapperTest {
+class BuyLogMapperTest {
 
-    private final BuyHistoryMapper mapper = new BuyHistoryMapperImpl();
+    private final BuyLogMapper mapper = new BuyLogMapperImpl();
 
     @Test
     void toEntity() {
