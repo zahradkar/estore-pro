@@ -7,13 +7,17 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
+import static eu.martin.store.common.Utils.PRODUCT_NOT_FOUND;
+
 @AllArgsConstructor
 @Service
 class ProductService {
     private ProductRepository productRepository;
-    private BuyHistoryRepository buyHistoryRepository;
+    private BuyLogRepository buyLogRepository;
     private ProductMapper productMapper;
-    private BuyHistoryMapper buyHistoryMapper;
+    private BuyLogMapper buyLogMapper;
 
     ProductResponse registerNewProduct(ProductRegisterDto dto) {
         var savedProduct = productRepository.save(productMapper.toEntity(dto));
@@ -25,11 +29,11 @@ class ProductService {
         var product = getProduct(id);
         product.increaseQuantity(dto.quantity());
 
-        var buyHistory = buyHistoryMapper.toEntity(dto);
-        buyHistory.setProduct(product);
-        buyHistory = buyHistoryRepository.save(buyHistory);
+        var buyLog = buyLogMapper.toEntity(dto);
+        buyLog.setProduct(product);
+        buyLog = buyLogRepository.save(buyLog);
 
-        return new ProductBuyResponse(product.getId(), product.getName(), product.getQuantity(), buyHistory.getBuyPrice(), buyHistory.getSupplier());
+        return productMapper.toProductBuyResponse(product, buyLog);
     }
 
     ProductResponse getProductById(Integer id) {
@@ -38,16 +42,24 @@ class ProductService {
     }
 
     private Product getProduct(Integer id) {
-        return productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Product id not found!"));
+        return productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(PRODUCT_NOT_FOUND));
     }
 
     ProductResponse update(Integer id, ProductUpdateDto dto) {
         var product = getProduct(id);
         productMapper.update(dto, product);
-        return productMapper.toResponse(product);
+
+        var updatedProduct = productRepository.save(product);
+
+        return productMapper.toResponse(updatedProduct);
     }
 
     Page<Product> getProtuctsPage(int page, int size) {
         return productRepository.findAll(PageRequest.of(page, size));
+    }
+
+    BuyLogResponse getProductBuyLogs(Integer productId) {
+        List<BuyLog> productBuyLogs = buyLogRepository.getProductBuyLogs(productId);
+        return buyLogMapper.toResponse(productBuyLogs);
     }
 }

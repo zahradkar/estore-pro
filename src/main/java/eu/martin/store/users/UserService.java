@@ -1,5 +1,6 @@
 package eu.martin.store.users;
 
+import eu.martin.store.auth.AuthService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.Set;
 
+import static eu.martin.store.common.Utils.*;
+
 @Service
 @AllArgsConstructor
 class UserService {
@@ -16,6 +19,7 @@ class UserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final ProfileRepository profileRepository;
+    private final AuthService authService;
 
     UserResponse registerUser(UserRequest dto) {
         if (userRepository.existsByEmail(dto.email()))
@@ -25,15 +29,23 @@ class UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRole(Role.USER);
         var registeredUser = userRepository.save(user);
+
+        var profile = new Profile();
+        profile.setUser(registeredUser);
+        profileRepository.save(profile);
+
         return userMapper.toUserResponse(registeredUser);
     }
 
     UserResponse getUser(long id) {
-        return userMapper.toUserResponse(findUserById(id));
+        if (authorized(authService.getCurrentUser(), id))
+            return userMapper.toUserResponse(findUserById(id));
+        else
+            throw new AccessDeniedException(FAILED_AUTHORIZATION);
     }
 
     private User findUserById(long id) {
-        return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User id not found!"));
+        return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
     }
 
     Iterable<UserResponse> getAllUsers(String sortBy) {
@@ -47,6 +59,9 @@ class UserService {
     }
 
     UserResponse updateUser(int id, UserRequest dto) {
+        if (!authorized(authService.getCurrentUser(), id))
+            throw new AccessDeniedException(FAILED_AUTHORIZATION);
+
         var user = findUserById(id);
         userMapper.update(dto, user);
         userRepository.save(user);
@@ -54,15 +69,25 @@ class UserService {
         return userMapper.toUserResponse(user);
     }
 
+    private boolean authorized(User currentUser, long userId) {
+        return currentUser.getRole().equals(Role.ADMIN) || userId == currentUser.getId();
+    }
+
     void deleteUser(long id) {
         if (!userRepository.existsById(id))
-            throw new EntityNotFoundException("User id not found!");
+            throw new EntityNotFoundException(USER_NOT_FOUND);
 
-        profileRepository.deleteById(id);
-        userRepository.deleteById(id);
+        if (authorized(authService.getCurrentUser(), id)) {
+            profileRepository.deleteById(id);
+            userRepository.deleteById(id);
+        } else
+            throw new AccessDeniedException(FAILED_AUTHORIZATION);
     }
 
     void changePassword(long id, ChangePasswordRequest dto) {
+        if (!authorized(authService.getCurrentUser(), id))
+            throw new AccessDeniedException(FAILED_AUTHORIZATION);
+
         var user = findUserById(id);
 
         if (!passwordEncoder.matches(dto.oldPassword(), user.getPassword()))
@@ -72,13 +97,25 @@ class UserService {
         userRepository.save(user);
     }
 
-    ProfileResponse createProfile(long userId, ProfileRequest dto) {
-        var profile = profileRepository.save(userMapper.toProfileEntity(dto, userId));
-        return userMapper.toProfileResponse(profile);
+    ProfileResponse updateProfile(long userId, ProfileRequest dto) {
+        if (!authorized(authService.getCurrentUser(), userId))
+            throw new AccessDeniedException(FAILED_AUTHORIZATION);
+
+        var profile = findProfile(userId);
+        userMapper.update(dto, profile);
+
+        return userMapper.toProfileResponse(profileRepository.save(profile));
     }
 
     ProfileResponse getProfile(long userId) {
-        var profile = profileRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User id not found!"));
+        if (!authorized(authService.getCurrentUser(), userId))
+            throw new AccessDeniedException(FAILED_AUTHORIZATION);
+
+        var profile = findProfile(userId);
         return userMapper.toProfileResponse(profile);
+    }
+
+    private Profile findProfile(long id) {
+        return profileRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(PROFILE_NOT_FOUND));
     }
 }

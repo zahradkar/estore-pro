@@ -12,8 +12,13 @@ class UserSecurityRules implements SecurityRules {
 
     @Value("${app.user-path}")
     private String userPath;
+
     @Override
     public void configure(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry registry) {
-        registry.requestMatchers(HttpMethod.POST, userPath).permitAll();
+        registry.requestMatchers(HttpMethod.POST, userPath).permitAll()
+                .requestMatchers(HttpMethod.GET, userPath).hasRole(Role.ADMIN.name()) // for get all users
+                .requestMatchers(HttpMethod.DELETE, userPath + "/**").authenticated()
+                .requestMatchers(HttpMethod.PUT, userPath + "/**").authenticated()
+                .requestMatchers(HttpMethod.POST, userPath + "/*/change-password").authenticated();
     }
 }

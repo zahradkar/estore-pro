@@ -26,9 +26,9 @@ class ProductServiceTest {
     @MockitoBean
     private ProductMapper productMapper;
     @MockitoBean
-    private BuyHistoryRepository buyHistoryRepository;
+    private BuyLogRepository buyLogRepository;
     @MockitoBean
-    private BuyHistoryMapper buyHistoryMapper;
+    private BuyLogMapper buyLogMapper;
 
     @Test
     void registerNewProduct() {
@@ -52,11 +52,11 @@ class ProductServiceTest {
 
         when(productRepository.save(productWithId)).thenReturn(productWithId);
 
-        when(buyHistoryMapper.toEntity(getBasicProductRequestDto())).thenReturn(getBasicBuyInfo());
+        when(buyLogMapper.toEntity(getBasicProductRequestDto())).thenReturn(getBasicBuyInfo());
 
         var savedBuyInfo = getBasicBuyInfo();
         ReflectionTestUtils.setField(savedBuyInfo, "id", 1L);
-        when(buyHistoryRepository.save(getBasicBuyInfo())).thenReturn(savedBuyInfo);
+        when(buyLogRepository.save(getBasicBuyInfo())).thenReturn(savedBuyInfo);
 
         // act
         var result = service.buyProduct(id, getBasicProductRequestDto());
@@ -79,10 +79,10 @@ class ProductServiceTest {
         return new ProductBuyRequest((short) 3, BigDecimal.valueOf(43.2), "product's supplier");
     }
 
-    private BuyHistory getBasicBuyInfo() {
-        var buyInfo = new BuyHistory();
-        buyInfo.setSupplier("product's supplier");
-        buyInfo.setBuyPrice(BigDecimal.valueOf(593.2));
-        return buyInfo;
+    private BuyLog getBasicBuyInfo() {
+        var buyLog = new BuyLog();
+        buyLog.setSupplier("product's supplier");
+        buyLog.setBuyPrice(BigDecimal.valueOf(593.2));
+        return buyLog;
     }
 }

@@ -11,7 +11,7 @@ public interface UserMapper {
 
     void update(UserRequest dto, @MappingTarget User user);
 
-    Profile toProfileEntity(ProfileRequest dto, long userId);
+    void update(ProfileRequest dto, @MappingTarget Profile profile);
 
     ProfileResponse toProfileResponse(Profile profile);
 }

@@ -9,7 +9,6 @@ import java.time.LocalDate;
 record ProfileRequest(
         String bio,
         String phoneNumber,
-        LocalDate dateOfBirth,
-        Integer loyaltyPoints
+        LocalDate dateOfBirth
 ) implements Serializable {
 }

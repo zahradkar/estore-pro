@@ -8,10 +8,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+import static eu.martin.store.common.Utils.CART_NOT_FOUND;
+import static eu.martin.store.common.Utils.PRODUCT_NOT_FOUND;
+
 @Service
 @AllArgsConstructor
 class CartService {
-    private static final String CART_NOT_FOUND = "Cart not found!";
     private final CartRepository cartRepository;
     private final CartMapper mapper;
     private final ProductRepository productRepository;
@@ -47,7 +49,7 @@ class CartService {
     }
 
     private Product getProduct(int productId) {
-        return productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException("Product not found!"));
+        return productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException(PRODUCT_NOT_FOUND));
     }
 
     CartItemResponse updateItem(UUID cartId, int productId, short quantity) {
