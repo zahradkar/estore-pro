@@ -4,27 +4,35 @@ import eu.martin.store.users.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
+@AllArgsConstructor
 @Service
-record JwtService(JwtConfig jwtConfig) {
+public class JwtService {
+    private final JwtConfig jwtConfig;
 
     Jwt generateAccessToken(User user) {
-        return generateToken(user, jwtConfig.getAccessTokenExpiration());
+        return generateToken(user, jwtConfig.getAccessTokenExpiration(), TokenId.ACCESS.name());
     }
 
     Jwt generateRefreshToken(User user) {
-        return generateToken(user, jwtConfig.getRefreshTokenExpiration());
+        return generateToken(user, jwtConfig.getRefreshTokenExpiration(), TokenId.REFRESH.name());
     }
 
-    private Jwt generateToken(User user, long tokenExpiration) {
+    public Jwt generateVerificationToken(User user) {
+        return generateToken(user, jwtConfig.getVerificationExpiration(), TokenId.VERIFICATION.name());
+    }
+
+    private Jwt generateToken(User user, long tokenExpiration, String tokenId) {
         var claims = Jwts.claims()
                 .subject(user.getId().toString())
                 .add("email", user.getEmail())
                 .add("name", user.getName())
                 .add("role", user.getRole())
+                .add("tokenId", tokenId)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + 1000 * tokenExpiration))
                 .build();
@@ -32,7 +40,7 @@ record JwtService(JwtConfig jwtConfig) {
         return new Jwt(claims, jwtConfig.getSecretKey());
     }
 
-    Jwt parseToken(String token) {
+    public Jwt parseToken(String token) {
         try {
             return new Jwt(getClaims(token), jwtConfig.getSecretKey());
         } catch (JwtException e) {

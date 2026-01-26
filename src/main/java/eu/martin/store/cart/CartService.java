@@ -11,8 +11,8 @@ import java.util.UUID;
 import static eu.martin.store.common.Utils.CART_NOT_FOUND;
 import static eu.martin.store.common.Utils.PRODUCT_NOT_FOUND;
 
-@Service
 @AllArgsConstructor
+@Service
 class CartService {
     private final CartRepository cartRepository;
     private final CartMapper mapper;

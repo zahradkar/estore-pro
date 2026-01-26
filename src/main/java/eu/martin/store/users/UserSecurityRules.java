@@ -15,10 +15,13 @@ class UserSecurityRules implements SecurityRules {
 
     @Override
     public void configure(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry registry) {
+
         registry.requestMatchers(HttpMethod.POST, userPath).permitAll()
                 .requestMatchers(HttpMethod.GET, userPath).hasRole(Role.ADMIN.name()) // for get all users
                 .requestMatchers(HttpMethod.DELETE, userPath + "/**").authenticated()
                 .requestMatchers(HttpMethod.PUT, userPath + "/**").authenticated()
-                .requestMatchers(HttpMethod.POST, userPath + "/*/change-password").authenticated();
+                .requestMatchers(HttpMethod.POST, userPath + "/*/change-password").authenticated()
+                .requestMatchers(HttpMethod.GET, userPath + "/verify/*").permitAll()
+                .requestMatchers(HttpMethod.GET, "/email-verification*").permitAll();
     }
 }

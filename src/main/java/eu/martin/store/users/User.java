@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,6 +35,14 @@ public class User {
     @Setter
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Setter
+    @Column(name = "verified", nullable = false)
+    private boolean verified;
+
+    @Column(name = "registered_at", nullable = false, insertable = false, updatable = false, columnDefinition = "datetime default CURRENT_TIMESTAMP")
+    @CreatedDate
+    private LocalDateTime registeredAt;
 
     @OneToMany(cascade = REMOVE)
     @JoinColumn(name = "user_id")

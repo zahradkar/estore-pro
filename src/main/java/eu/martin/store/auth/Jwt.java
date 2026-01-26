@@ -7,20 +7,14 @@ import io.jsonwebtoken.Jwts;
 import javax.crypto.SecretKey;
 import java.util.Date;
 
-class Jwt {
-    private final Claims claims;
-    private final SecretKey secretKey;
-
-    Jwt(Claims claims, SecretKey secretKey) {
-        this.claims = claims;
-        this.secretKey = secretKey;
-    }
+public record Jwt(Claims claims, SecretKey secretKey) {
+    private static final String TOKEN_ID = "tokenId";
 
     boolean isExpired() {
         return claims.getExpiration().before(new Date());
     }
 
-    Long getUserId() {
+    public Long getUserId() {
         return Long.valueOf(claims.getSubject());
     }
 
@@ -31,5 +25,17 @@ class Jwt {
     @Override
     public String toString() {
         return Jwts.builder().claims(claims).signWith(secretKey).compact();
+    }
+
+    boolean notAccess() {
+        return !claims().get(TOKEN_ID).equals(TokenId.ACCESS.name());
+    }
+
+    boolean notRefresh() {
+        return !claims().get(TOKEN_ID).equals(TokenId.REFRESH.name());
+    }
+
+    public boolean isVerification() {
+        return claims().get(TOKEN_ID).equals(TokenId.VERIFICATION.name());
     }
 }

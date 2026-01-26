@@ -2,6 +2,7 @@ package eu.martin.store.common;
 
 import eu.martin.store.cart.ItemNotFoundException;
 import eu.martin.store.cart.QuantityExceedException;
+import eu.martin.store.email.MailException;
 import eu.martin.store.users.DuplicateUserException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -16,8 +17,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
@@ -64,6 +64,11 @@ class GlobalExceptionHandler {
         exception.getBindingResult().getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
 
         return ResponseEntity.badRequest().body(errors);
+    }
+
+    @ExceptionHandler(MailException.class)
+    ResponseEntity<String> handleMail(MailException ex) {
+        return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("error: " + ex.getClass() + ": " + ex.getMessage());
     }
 
     @ExceptionHandler(EntityNotFoundException.class)

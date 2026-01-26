@@ -15,8 +15,23 @@ spring:
     secret: ${JWT_SECRET}
     accessTokenExpiration: 300 # 5m
     refreshTokenExpiration: 604800 # 7d
+    verificationExpiration: 10800 # 3h
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${MAIL_ADDRESS} #<login user to smtp server>
+    password: ${MAIL_PASSWORD} #<login password to smtp server>
+    properties.mail:
+      mime:
+        charset: UTF
+      smtp:
+        auth: true
+        starttls:
+          enable: true
+    default-encoding: UTF-8
 
 app:
+  base-uri: http://localhost:8080
   api: /api
   user-path: ${app.api}/users
   admin-path: ${app.api}/admin

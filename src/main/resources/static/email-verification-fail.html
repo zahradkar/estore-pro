@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Verification Status</title>
+    <style>
+      /* Simple Global Styles */
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Container for the content */
+      .content-container {
+        max-width: 400px;
+        margin: auto;
+        padding: 20px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        margin-top: 40px;
+      }
+
+      /* Form Styles */
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+
+      label {
+        margin-bottom: 10px;
+      }
+
+      input[type="email"] {
+        padding: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+      }
+
+      button[type="submit"] {
+        background-color: #007bff;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+      }
+
+      button[type="submit"]:hover {
+        background-color: #0056b3;
+      }
+
+      /* Disabled Button Style */
+      button[type="submit"]:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        background-color: #0069d9; /* Slightly darker to indicate disabled state */
+      }
+
+      /* Response Message Styles */
+      #responseMessage {
+        margin-top: 15px;
+        font-size: 0.9em;
+        color: #666;
+      }
+
+      /* Error Message Adjustment */
+      #responseMessage.error {
+        color: #e00;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content-container">
+      <span style="color: #e00; font-size: 1.1em;">Something went wrong during verification! (invalid token)</span><br><br>
+      <form id="emailForm">
+        <label for="emailInput">If you want to obtain a new token, please, send us your e-mail address:</label>
+        <input id="emailInput" placeholder="your e-mail address" required type="email">
+        <button id="submitButton" type="submit" value="Submit">Send e-address</button>
+        <div id="responseMessage"></div> <!-- For displaying server response -->
+      </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('emailForm');
+        const emailInput = document.getElementById('emailInput');
+        const submitButton = document.getElementById('submitButton'); // Get the submit button
+        const responseMessageDiv = document.getElementById('responseMessage');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = emailInput.value.trim();
+
+            // Disable the submit button
+            submitButton.disabled = true;
+
+            if (email) {
+                fetch(`/users/resend-token/${email}`, {method: 'GET'})
+                    .then(response => response.text())
+                    .then((message) => {
+                        responseMessageDiv.innerHTML = message;
+                        // Simple error message class addition based on text content
+                        if (message.includes("Error") || message.includes("Failed")) {
+                            responseMessageDiv.classList.add("error");
+                        } else {
+                            responseMessageDiv.classList.remove("error");
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                        responseMessageDiv.innerHTML = 'Failed to send request.';
+                        responseMessageDiv.classList.add("error");
+                    })
+                    .finally(() => { // Re-enable the button regardless of the outcome
+                        submitButton.disabled = false;
+                    });
+            } else {
+                responseMessageDiv.innerHTML = 'Please enter your email address.';
+                responseMessageDiv.classList.add("error");
+                submitButton.disabled = false; // Re-enable if no email was provided
+            }
+        });
+    </script>
+  </body>
+</html>

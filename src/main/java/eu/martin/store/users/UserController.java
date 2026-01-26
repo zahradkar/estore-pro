@@ -3,6 +3,8 @@ package eu.martin.store.users;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -62,4 +64,40 @@ class UserController {
     ResponseEntity<ProfileResponse> getProfile(@PathVariable("id") Long userId) { // test passed
         return ResponseEntity.ok(service.getProfile(userId));
     }
+
+    /**
+     * todo
+     * Password resets
+     * Account lockouts
+     * Brute-force protection
+     */
+
+    /**
+     * Verifies user's e-mail address using JWT<br>
+     * flow:<br>
+     * 1. User registers himself and validation e-mail is sent to his e-address.<br>
+     * 2. When the user confirms (verifies) the e-address, his/her account is enabled.
+     */
+
+    @GetMapping("/verify/{token}")
+    ResponseEntity<String> verifyUserEmail(@PathVariable String token) {
+        String location = service.verifyEmail(token) ? "/email-verification-success.html" : "/email-verification-fail.html";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Location", location);
+
+        // Note the use of HttpStatus.FOUND for redirect
+        return new ResponseEntity<>(headers, HttpStatus.FOUND);
+    }
+
+    @GetMapping("/resend-token/{email}")
+    ResponseEntity<String> resendVerificationToken(@PathVariable String email) {
+        return ResponseEntity.ok(service.resendVerificationToken(email));
+    }
+
+//    @PostMapping("/{email}/reset-password")
+//    ResponseEntity<Void> resetPassword(@PathVariable("email") String email) {
+//        service.resetPassword(email);
+//        return ResponseEntity.ok().build();
+//    }
 }
