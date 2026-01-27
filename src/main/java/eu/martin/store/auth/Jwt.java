@@ -10,7 +10,7 @@ import java.util.Date;
 public record Jwt(Claims claims, SecretKey secretKey) {
     private static final String TOKEN_ID = "tokenId";
 
-    boolean isExpired() {
+    public boolean isExpired() {
         return claims.getExpiration().before(new Date());
     }
 
@@ -27,15 +27,19 @@ public record Jwt(Claims claims, SecretKey secretKey) {
         return Jwts.builder().claims(claims).signWith(secretKey).compact();
     }
 
-    boolean notAccess() {
+    boolean isNotAccess() {
         return !claims().get(TOKEN_ID).equals(TokenId.ACCESS.name());
     }
 
-    boolean notRefresh() {
+    boolean isNotRefresh() {
         return !claims().get(TOKEN_ID).equals(TokenId.REFRESH.name());
     }
 
     public boolean isVerification() {
         return claims().get(TOKEN_ID).equals(TokenId.VERIFICATION.name());
+    }
+
+    String getEmail() {
+        return claims.get("email", String.class);
     }
 }

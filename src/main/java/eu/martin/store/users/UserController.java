@@ -2,6 +2,7 @@ package eu.martin.store.users;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -9,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping("${app.user-path}")
 @RestController
@@ -66,13 +67,6 @@ class UserController {
     }
 
     /**
-     * todo
-     * Password resets
-     * Account lockouts
-     * Brute-force protection
-     */
-
-    /**
      * Verifies user's e-mail address using JWT<br>
      * flow:<br>
      * 1. User registers himself and validation e-mail is sent to his e-address.<br>
@@ -94,10 +88,4 @@ class UserController {
     ResponseEntity<String> resendVerificationToken(@PathVariable String email) {
         return ResponseEntity.ok(service.resendVerificationToken(email));
     }
-
-//    @PostMapping("/{email}/reset-password")
-//    ResponseEntity<Void> resetPassword(@PathVariable("email") String email) {
-//        service.resetPassword(email);
-//        return ResponseEntity.ok().build();
-//    }
 }

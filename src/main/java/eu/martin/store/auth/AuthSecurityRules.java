@@ -9,12 +9,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthSecurityRules implements SecurityRules {
     @Value("${app.auth-path}")
-    private String authPath; // todo test
+    private String authPath;
 
     @Override
     public void configure(AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry registry) {
-        registry
-                .requestMatchers(HttpMethod.POST, authPath + "/login").permitAll()
-                .requestMatchers(HttpMethod.POST, authPath + "/refresh").permitAll();
+        registry.requestMatchers(HttpMethod.POST, authPath + "/login", authPath + "/refresh").permitAll()
+                .requestMatchers(HttpMethod.GET, authPath + "/login-via-email/*", authPath + "/*").permitAll();
     }
 }

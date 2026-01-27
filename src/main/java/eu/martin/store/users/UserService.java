@@ -39,7 +39,7 @@ class UserService {
     private boolean deletedOnStartup = false;
 
     @Value("${app.base-uri}")
-    private String baseUrl;
+    private String baseUri;
 
     @Value("${app.user-path}")
     private String userPath;
@@ -95,7 +95,7 @@ class UserService {
 
     boolean verifyEmail(String token) {
         var jwt = jwtService.parseToken(token);
-        if (jwt == null || !jwt.isVerification())
+        if (jwt == null || jwt.isExpired() || !jwt.isVerification())
             return false;
 
         var user = userRepository.findById(jwt.getUserId()).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
@@ -115,7 +115,7 @@ class UserService {
 
     private void generateAndSendVerificationToken(User user) {
         var jwt = jwtService.generateVerificationToken(user);
-        var path = baseUrl + userPath + "/verify/" + jwt.toString();
+        var path = baseUri + userPath + "/verify/" + jwt.toString();
 
         emailService.sendEmail( // verification e-mail
                 user.getEmail(),
@@ -212,13 +212,5 @@ class UserService {
 
     private User findByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-    }
-
-    void resetPassword(String email) {
-        var user = findByEmail(email);
-
-        if (user.isVerified()) {
-            emailService.sendEmail(email, "E-shop: password reset", ":-)");
-        }
     }
 }
