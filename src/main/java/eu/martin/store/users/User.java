@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -40,7 +41,8 @@ public class User {
     @Column(name = "verified", nullable = false)
     private boolean verified;
 
-    @Column(name = "registered_at", nullable = false, insertable = false, updatable = false, columnDefinition = "datetime default CURRENT_TIMESTAMP")
+    @CreationTimestamp
+    @Column(name = "registered_at", nullable = false, updatable = false)
     @CreatedDate
     private LocalDateTime registeredAt;
 

@@ -10,7 +10,6 @@ enum MeasureUnit {
     METRE("M"),
     LITER("L"),
     UNIT("KS"),
-//    SECOND("SEK"),
     PACKAGE("BAL");
 
     private final String code;
