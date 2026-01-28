@@ -1,6 +1,7 @@
 package eu.martin.store.auth;
 
 import eu.martin.store.users.UserResponse;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -27,6 +28,7 @@ class AuthController {
      * Brute-force protection
      */
 
+    @Operation(summary = "Provides login using e-mail and password.")
     @PostMapping("/login")
     JwtResponse loginViaCredentials(@Valid @RequestBody LoginRequest request, HttpServletResponse response) { // test passed
         var loginResult = authService.loginViaCredentials(request);
@@ -46,6 +48,7 @@ class AuthController {
         return new JwtResponse(loginResult.accessToken().toString());
     }
 
+    @Operation(summary = "Provides one-time login using a link in sent e-mail.")
     @GetMapping("/login-via-email/{token}")
     JwtResponse loginViaEmail(@PathVariable String token, HttpServletResponse response) {
         log.debug("Processing loginViaEmail request.");
@@ -56,17 +59,20 @@ class AuthController {
         return getJwtResponse(response, loginResult);
     }
 
+    @Operation(summary = "Sends an e-mail with a link for one-time login.")
     @GetMapping("{email}")
     void sendEmailForLogin(@PathVariable String email) {
         authService.sendEmailForLogin(email);
     }
 
+    @Operation(summary = "Returns refresh token.")
     @PostMapping("/refresh")
     JwtResponse refresh(@CookieValue(value = "refreshToken") String refreshToken) { // test passed (even if user is not logged in)
         var accessToken = authService.refreshAccessToken(refreshToken);
         return new JwtResponse(accessToken.toString());
     }
 
+    @Operation(summary = "Returns currently logged in user.")
     @GetMapping("/me")
     ResponseEntity<UserResponse> me() { // test passed
         return ResponseEntity.ok(authService.getCurrentUserInfo());
