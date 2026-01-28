@@ -1,7 +1,9 @@
 package eu.martin.store.common;
 
 import eu.martin.store.cart.ItemNotFoundException;
+import eu.martin.store.cart.ProductException;
 import eu.martin.store.cart.QuantityExceedException;
+import eu.martin.store.checkout.CartException;
 import eu.martin.store.email.MailException;
 import eu.martin.store.users.DuplicateUserException;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,7 +19,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
@@ -68,7 +70,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(MailException.class)
     ResponseEntity<String> handleMail(MailException ex) {
-        return ResponseEntity.status(INTERNAL_SERVER_ERROR).body("error: " + ex.getClass() + ": " + ex.getMessage());
+        return ResponseEntity.internalServerError().body("error: " + ex.getClass() + ": " + ex.getMessage());
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
@@ -76,19 +78,9 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(NOT_FOUND).body(ex.getMessage());
     }
 
-    @ExceptionHandler(QuantityExceedException.class)
-    ResponseEntity<String> handleEntityNotFound(QuantityExceedException ex) {
-        return ResponseEntity.status(BAD_REQUEST).body(ex.getMessage());
-    }
-
-    @ExceptionHandler(ItemNotFoundException.class)
-    ResponseEntity<String> handleEntityNotFound(ItemNotFoundException ex) {
-        return ResponseEntity.status(BAD_REQUEST).body(ex.getMessage());
-    }
-
-    @ExceptionHandler(DuplicateUserException.class)
-    ResponseEntity<String> handleEntityNotFound(DuplicateUserException ex) {
-        return ResponseEntity.status(BAD_REQUEST).body(ex.getMessage());
+    @ExceptionHandler({ItemNotFoundException.class, DuplicateUserException.class, QuantityExceedException.class, CartException.class, ProductException.class, HttpMessageNotReadableException.class})
+    ResponseEntity<String> handleBadRequests(Exception ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
     @ExceptionHandler(AccessDeniedException.class)
@@ -99,10 +91,5 @@ class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<String> handleBadCredentials(BadCredentialsException exception) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(exception.getMessage());
-    }
-
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<String> handleHttpMessageNotReadable(HttpMessageNotReadableException ex) {
-        return ResponseEntity.status(BAD_REQUEST).body(ex.getMessage());
     }
 }

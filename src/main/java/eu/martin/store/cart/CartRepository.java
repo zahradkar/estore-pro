@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 import java.util.UUID;
 
-interface CartRepository extends JpaRepository<Cart, UUID> {
+public interface CartRepository extends JpaRepository<Cart, UUID> {
     @EntityGraph(attributePaths = "items.product")
     @Query("SELECT c FROM Cart c WHERE c.id = :cartId")
     Optional<Cart> getCartWithItems(@Param("cartId") UUID cartId);

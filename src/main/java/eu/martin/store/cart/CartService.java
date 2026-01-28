@@ -13,7 +13,7 @@ import static eu.martin.store.common.Utils.PRODUCT_NOT_FOUND;
 
 @AllArgsConstructor
 @Service
-class CartService {
+public class CartService {
     private final CartRepository cartRepository;
     private final CartMapper mapper;
     private final ProductRepository productRepository;
@@ -49,7 +49,7 @@ class CartService {
     }
 
     private Product getProduct(int productId) {
-        return productRepository.findById(productId).orElseThrow(() -> new EntityNotFoundException(PRODUCT_NOT_FOUND));
+        return productRepository.findById(productId).orElseThrow(() -> new ProductException(PRODUCT_NOT_FOUND));
     }
 
     CartItemResponse updateItem(UUID cartId, int productId, short quantity) {
@@ -76,7 +76,7 @@ class CartService {
         cartRepository.save(cart);
     }
 
-    void clearCart(UUID cartId) {
+    public void clearCart(UUID cartId) {
         var cart = getCartWithItems(cartId);
 
         cart.clear();
