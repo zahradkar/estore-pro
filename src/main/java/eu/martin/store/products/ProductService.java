@@ -2,6 +2,7 @@ package eu.martin.store.products;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import java.util.List;
 
 import static eu.martin.store.common.Utils.PRODUCT_NOT_FOUND;
 
+@Slf4j
 @AllArgsConstructor
 @Service
 class ProductService {
@@ -19,9 +21,13 @@ class ProductService {
     private ProductMapper productMapper;
     private BuyLogMapper buyLogMapper;
 
-    ProductResponse registerNewProduct(ProductRegisterDto dto) {
-        var savedProduct = productRepository.save(productMapper.toEntity(dto));
-        return productMapper.toResponse(savedProduct);
+    @Transactional
+    ProductController.ProductWithAttribsResponse createProductWithAttributes(ProductController.ProductWithAttribsRequest dto) {
+        var product = productMapper.toProduct(dto);
+
+        var createdProduct = productRepository.save(product);
+
+        return productMapper.toProductWithAttributesResponse(createdProduct);
     }
 
     @Transactional

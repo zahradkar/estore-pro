@@ -12,28 +12,12 @@ class ProductMapperTest {
     private final ProductMapper mapper = new ProductMapperImpl();
 
     @Test
-    void toEntity() {
-        var name = "name";
-        var description = "description";
-        var sellPrice = BigDecimal.valueOf(35.2);
-        var unit = UNIT;
-        var request = new ProductRegisterDto(name, description, sellPrice, unit);
-
-        var result = mapper.toEntity(request);
-
-        assertEquals(name, result.getName());
-        assertEquals(description, result.getDescription());
-        assertEquals(sellPrice, result.getSellPrice());
-        assertEquals(unit, result.getMeasureUnit());
-    }
-
-    @Test
     void toResponse() {
         var id = 4;
         var name = "name";
         var description = "description";
         var sellPrice = BigDecimal.valueOf(35.2);
-        short quantity = 54;
+        int quantity = 54;
         var unit = UNIT;
         var product = new Product();
         ReflectionTestUtils.setField(product, "id", id);

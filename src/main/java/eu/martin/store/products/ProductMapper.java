@@ -4,9 +4,28 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import java.util.Set;
+
 @Mapper(componentModel = "spring")
 interface ProductMapper {
-    Product toEntity(ProductRegisterDto dto);
+
+    // handle requests
+    @Mapping(expression = "java(toAttributes(dto.attributeDtos()))", target = "attributes")
+    Product toProduct(ProductController.ProductWithAttribsRequest dto);
+
+    Attribute toAttribute(ProductController.AttributeDto dto);
+
+    Set<Attribute> toAttributes(Set<ProductController.AttributeDto> dtos);
+    // ^ handles requests ^
+
+    // handle responses
+    @Mapping(expression = "java(toAttributeDtos(product.getAttributes()))", target = "attributeDtos")
+    ProductController.ProductWithAttribsResponse toProductWithAttributesResponse(Product product);
+
+    ProductController.AttributeDto toAttributeDto(Attribute attribute);
+
+    Set<ProductController.AttributeDto> toAttributeDtos(Set<Attribute> attributes);
+    // ^ handles responses ^
 
     ProductResponse toResponse(Product product);
 
