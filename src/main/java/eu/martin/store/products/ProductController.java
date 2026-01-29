@@ -25,15 +25,15 @@ class ProductController {
 
     @Operation(summary = "Registers new product (Creates product with attributes and saves it).")
     @PostMapping
-    ResponseEntity<ProductWithAttribsResponse> registerProductWithAttributes(@RequestBody @Valid ProductController.ProductWithAttribsRequest dto, UriComponentsBuilder uriBuilder) {
+    ResponseEntity<ProductWithAttribsDto> registerProductWithAttributes(@RequestBody @Valid ProductController.ProductWithAttribsDto dto, UriComponentsBuilder uriBuilder) {
         var result = service.createProductWithAttributes(dto);
 
-        var uri = uriBuilder.path("/products/{id}").buildAndExpand(result.id).toUri();
+        var uri = uriBuilder.path(productPath + "/{id}").buildAndExpand(result.id).toUri();
 
         return ResponseEntity.created(uri).body(result);
     }
 
-    @Operation(summary = "Saves buy logs into the database (Increases quantity of product, adds buy price and supplier)")
+    @Operation(summary = "Saves buy logs (Increases quantity of product, adds buy price and supplier and saves).")
     @PostMapping("/{id}")
     ResponseEntity<ProductBuyResponse> buyProduct(@PathVariable Integer id, @RequestBody @Valid ProductBuyRequest dto) { // test passed
         return ResponseEntity.ok(service.buyProduct(id, dto));
@@ -41,14 +41,15 @@ class ProductController {
 
     @Operation(summary = "Returns product by ID.")
     @GetMapping("/{id}")
-    ResponseEntity<ProductResponse> getProduct(@PathVariable Integer id) { // test passed
+    ResponseEntity<ProductWithAttribsDto> getProduct(@PathVariable Integer id) { // test passed
         return ResponseEntity.ok(service.getProductById(id));
     }
 
     @Operation(summary = "Updates product by ID.")
-    @PutMapping("/{id}")
-    ResponseEntity<ProductResponse> updateProduct(@PathVariable Integer id, @RequestBody @Valid ProductUpdateDto dto) { // test passed
-        return ResponseEntity.ok(service.update(id, dto));
+    @PutMapping
+    ResponseEntity<ProductWithAttribsDto> updateProduct(@RequestBody @Valid ProductController.ProductWithAttribsDto dto) { // test passed
+        // used also for adding/removing attributes to/from Product
+        return ResponseEntity.ok(service.update(dto));
     }
 
     @Operation(summary = "Returns all products.")
@@ -64,7 +65,8 @@ class ProductController {
     }
 
 
-    record ProductWithAttribsRequest(
+    record ProductWithAttribsDto(
+            Integer id,
             @NotBlank String name,
             String description,
             @NotNull BigDecimal sellPrice,
@@ -79,17 +81,6 @@ class ProductController {
             String value,
             @NotNull Attribute.DataType type,
             @NotNull Boolean mandatory
-    ) {
-    }
-
-    record ProductWithAttribsResponse(
-            long id,
-            String name,
-            String description,
-            BigDecimal sellPrice,
-            Integer quantity,
-            MeasureUnit measureUnit,
-            Set<AttributeDto> attributeDtos
     ) {
     }
 

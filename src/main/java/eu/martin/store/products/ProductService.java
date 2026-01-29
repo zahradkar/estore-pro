@@ -22,12 +22,12 @@ class ProductService {
     private BuyLogMapper buyLogMapper;
 
     @Transactional
-    ProductController.ProductWithAttribsResponse createProductWithAttributes(ProductController.ProductWithAttribsRequest dto) {
+    ProductController.ProductWithAttribsDto createProductWithAttributes(ProductController.ProductWithAttribsDto dto) {
         var product = productMapper.toProduct(dto);
 
         var createdProduct = productRepository.save(product);
 
-        return productMapper.toProductWithAttributesResponse(createdProduct);
+        return productMapper.toProductWithAttributesDto(createdProduct);
     }
 
     @Transactional
@@ -35,29 +35,30 @@ class ProductService {
         var product = getProduct(id);
         product.increaseQuantity(dto.quantity());
 
-        var buyLog = buyLogMapper.toEntity(dto);
-        buyLog.setProduct(product);
+        var buyLog = buyLogMapper.toBuyLog(dto, product);
         buyLog = buyLogRepository.save(buyLog);
 
         return productMapper.toProductBuyResponse(product, buyLog);
     }
 
-    ProductResponse getProductById(Integer id) {
+    ProductController.ProductWithAttribsDto getProductById(Integer id) {
         var product = getProduct(id);
-        return productMapper.toResponse(product);
+        return productMapper.toProductWithAttributesDto(product);
     }
 
     private Product getProduct(Integer id) {
         return productRepository.findById(id).orElseThrow(() -> new EntityNotFoundException(PRODUCT_NOT_FOUND));
     }
 
-    ProductResponse update(Integer id, ProductUpdateDto dto) {
-        var product = getProduct(id);
+    ProductController.ProductWithAttribsDto update(ProductController.ProductWithAttribsDto dto) {
+        if (dto.id() == null)
+            throw new IllegalArgumentException("On update product, ID must be provided!");
+        var product = getProduct(dto.id());
         productMapper.update(dto, product);
 
         var updatedProduct = productRepository.save(product);
 
-        return productMapper.toResponse(updatedProduct);
+        return productMapper.toProductWithAttributesDto(updatedProduct);
     }
 
     Page<Product> getProtuctsPage(int page, int size) {

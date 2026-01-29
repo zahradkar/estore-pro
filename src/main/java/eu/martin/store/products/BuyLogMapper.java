@@ -1,12 +1,14 @@
 package eu.martin.store.products;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 
 @Mapper(componentModel = "spring")
 interface BuyLogMapper {
-    BuyLog toEntity(ProductBuyRequest dto);
+    @Mapping(ignore = true, target = "timestamp")
+    BuyLog toBuyLog(ProductBuyRequest dto, Product product);
 
     default BuyLogResponse toResponse(List<BuyLog> buyLogs) {
         if (buyLogs == null || buyLogs.isEmpty())

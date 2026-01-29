@@ -9,14 +9,13 @@ import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
-import static jakarta.persistence.CascadeType.PERSIST;
-import static jakarta.persistence.CascadeType.REMOVE;
+import static jakarta.persistence.CascadeType.*;
 
 @Getter
 @Entity
 @Table(name = "products")
 public class Product {
-    @OneToMany(cascade = {PERSIST, REMOVE}, orphanRemoval = true)
+    @OneToMany(cascade = {PERSIST, MERGE, REMOVE}, orphanRemoval = true)
     @JoinColumn(name = "product_id")
     private final Set<Attribute> attributes = new HashSet<>();
 

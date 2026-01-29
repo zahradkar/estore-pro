@@ -78,7 +78,7 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(NOT_FOUND).body(ex.getMessage());
     }
 
-    @ExceptionHandler({ItemNotFoundException.class, DuplicateUserException.class, QuantityExceedException.class, CartException.class, ProductException.class, HttpMessageNotReadableException.class})
+    @ExceptionHandler({ItemNotFoundException.class, DuplicateUserException.class, QuantityExceedException.class, CartException.class, ProductException.class, HttpMessageNotReadableException.class, IllegalArgumentException.class})
     ResponseEntity<String> handleBadRequests(Exception ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }

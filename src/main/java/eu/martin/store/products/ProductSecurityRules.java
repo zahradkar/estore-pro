@@ -19,7 +19,7 @@ class ProductSecurityRules implements SecurityRules {
         registry.requestMatchers(HttpMethod.GET, productPath + "/*/logs").hasRole(Role.ADMIN.name())
                 .requestMatchers(HttpMethod.GET, productPath + "/**").permitAll()
                 .requestMatchers(HttpMethod.POST, productPath + "/**").hasRole(Role.ADMIN.name())
-                .requestMatchers(HttpMethod.PUT, productPath + "/**").hasRole(Role.ADMIN.name())
+                .requestMatchers(HttpMethod.PUT, productPath ).hasRole(Role.ADMIN.name())
                 .requestMatchers(HttpMethod.DELETE, productPath + "/**").hasRole(Role.ADMIN.name());
     }
 }
