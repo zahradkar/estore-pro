@@ -3,11 +3,14 @@ package eu.martin.store.products;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static eu.martin.store.common.Utils.PRODUCT_NOT_FOUND;
@@ -61,10 +64,6 @@ class ProductService {
         return productMapper.toProductWithAttributesDto(updatedProduct);
     }
 
-    Page<Product> getProtuctsPage(int page, int size) {
-        return productRepository.findAll(PageRequest.of(page, size));
-    }
-
     BuyLogResponse getProductBuyLogs(Integer productId) {
         if (!productRepository.existsById(productId))
             throw new EntityNotFoundException(PRODUCT_NOT_FOUND);
@@ -72,5 +71,30 @@ class ProductService {
         List<BuyLog> productBuyLogs = buyLogRepository.getProductBuyLogs(productId);
 
         return buyLogMapper.toResponse(productBuyLogs);
+    }
+
+    List<ProductController.ProductSpecsResponse> getSortedProductsBySpecification(short pageNumber, short pageSize, String name, BigDecimal minPrice, BigDecimal maxPrice, String attributeName, String productProperty, boolean descending) {
+        var specification = new ArrayList<Specification<Product>>(4);
+        Sort sort;
+
+        if (name != null)
+            specification.add(ProductSpecifications.hasName(name));
+        if (minPrice != null)
+            specification.add(ProductSpecifications.hasPriceGreaterThanOrEqualTo(minPrice));
+        if (maxPrice != null)
+            specification.add(ProductSpecifications.hasPriceLessThanOrEqualTo(maxPrice));
+        if (attributeName != null)
+            specification.add(ProductSpecifications.hasAttribute(attributeName));
+
+        if (productProperty == null)
+            sort = Sort.unsorted();
+        else if (descending)
+            sort = Sort.by(productProperty).descending();
+        else
+            sort = Sort.by(productProperty);
+
+        var sortedProductsBySpecification = productRepository.findAll(Specification.allOf(specification), PageRequest.of(pageNumber, pageSize, sort)).getContent();
+
+        return productMapper.toSpecsResponse(sortedProductsBySpecification);
     }
 }

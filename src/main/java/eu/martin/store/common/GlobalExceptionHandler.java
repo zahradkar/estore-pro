@@ -7,6 +7,7 @@ import eu.martin.store.checkout.CartException;
 import eu.martin.store.email.MailException;
 import eu.martin.store.users.DuplicateUserException;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -78,9 +79,9 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(NOT_FOUND).body(ex.getMessage());
     }
 
-    @ExceptionHandler({ItemNotFoundException.class, DuplicateUserException.class, QuantityExceedException.class, CartException.class, ProductException.class, HttpMessageNotReadableException.class, IllegalArgumentException.class})
-    ResponseEntity<String> handleBadRequests(Exception ex) {
-        return ResponseEntity.badRequest().body(ex.getMessage());
+    @ExceptionHandler({ItemNotFoundException.class, DuplicateUserException.class, QuantityExceedException.class, CartException.class, ProductException.class, HttpMessageNotReadableException.class, IllegalArgumentException.class, PropertyReferenceException.class})
+    ResponseEntity<ErrorMessage> handleBadRequests(Exception ex) {
+        return ResponseEntity.badRequest().body(new ErrorMessage(ex.getMessage()));
     }
 
     @ExceptionHandler(AccessDeniedException.class)

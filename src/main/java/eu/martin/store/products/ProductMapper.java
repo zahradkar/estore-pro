@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
+import java.util.List;
 import java.util.Set;
 
 @Mapper(componentModel = "spring")
@@ -35,4 +36,7 @@ interface ProductMapper {
 
     @Mapping(expression = "java(toAttributes(dto.attributeDtos()))", target = "attributes")
     void update(ProductController.ProductWithAttribsDto dto, @MappingTarget Product product);
+
+    List<ProductController.ProductSpecsResponse> toSpecsResponse(List<Product> specificProducts);
+
 }
