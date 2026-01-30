@@ -29,7 +29,7 @@ class BuyLog {
 
     @Setter
     @CreationTimestamp
-    @Column(insertable = false, updatable = false)
+    @Column(updatable = false)
     private LocalDateTime timestamp;
 
     @Setter
