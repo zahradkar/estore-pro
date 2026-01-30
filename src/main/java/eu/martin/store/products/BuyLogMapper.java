@@ -8,20 +8,21 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 interface BuyLogMapper {
     @Mapping(ignore = true, target = "timestamp")
-    BuyLog toBuyLog(ProductBuyRequest dto, Product product);
+    BuyLog toBuyLog(ProductController.ProductBuyRequest dto, Product product);
 
     default BuyLogResponse toResponse(List<BuyLog> buyLogs) {
         if (buyLogs == null || buyLogs.isEmpty())
             return null;
 
-        Product product = buyLogs.getFirst().getProduct();
+        var summary = toProductSummary(buyLogs.getFirst().getProduct());
+        var logs = toInnerLogs(buyLogs);
 
-        List<BuyLogResponse.BuyLog> logs = toInnerLogs(buyLogs);
-
-        return new BuyLogResponse(product, logs);
+        return new BuyLogResponse(summary, logs);
     }
 
-    List<BuyLogResponse.BuyLog> toInnerLogs(List<BuyLog> buyLogs);
+    BuyLogResponse.ProductSummary toProductSummary(Product product);
 
-    BuyLogResponse.BuyLog toInnerLog(BuyLog buyLog);
+    List<BuyLogResponse.BuyLogDto> toInnerLogs(List<BuyLog> buyLogs);
+
+    BuyLogResponse.BuyLogDto toInnerLog(BuyLog buyLog);
 }

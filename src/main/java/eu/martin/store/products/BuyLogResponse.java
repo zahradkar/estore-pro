@@ -5,13 +5,22 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 record BuyLogResponse(
-        Product product,
-        List<BuyLog> logs
+        ProductSummary product,
+        List<BuyLogDto> logs
 ) {
-    record BuyLog(
+    record ProductSummary(
+            String name,
+            BigDecimal sellPrice,
+            int quantity,
+            MeasureUnit measureUnit
+    ) {
+    }
+
+    record BuyLogDto(
             long id,
             BigDecimal buyPrice,
             String supplier,
-            LocalDateTime timestamp) {
+            LocalDateTime timestamp
+    ) {
     }
 }

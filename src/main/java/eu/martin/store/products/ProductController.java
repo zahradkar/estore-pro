@@ -2,6 +2,7 @@ package eu.martin.store.products;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ class ProductController {
     @Value("${app.product-path}")
     private String productPath;
 
-    @Operation(summary = "Registers new product (Creates product with attributes and saves it).")
+    @Operation(summary = "Registers new product (Creates product with attributes).")
     @PostMapping
     ResponseEntity<ProductWithAttribsDto> registerProductWithAttributes(@RequestBody @Valid ProductController.ProductWithAttribsDto dto, UriComponentsBuilder uriBuilder) {
         var result = service.createProductWithAttributes(dto);
@@ -33,7 +35,7 @@ class ProductController {
         return ResponseEntity.created(uri).body(result);
     }
 
-    @Operation(summary = "Saves buy logs (Increases quantity of product, adds buy price and supplier and saves).")
+    @Operation(summary = "Saves buy logs.")
     @PostMapping("/{id}")
     ResponseEntity<ProductBuyResponse> buyProduct(@PathVariable Integer id, @RequestBody @Valid ProductBuyRequest dto) { // test passed
         return ResponseEntity.ok(service.buyProduct(id, dto));
@@ -58,7 +60,7 @@ class ProductController {
         return ResponseEntity.ok(service.getProtuctsPage(page, size));
     }
 
-    @Operation(summary = "Returns buy logs/history of given product.")
+    @Operation(summary = "Returns buy logs of given product.")
     @GetMapping("/{id}/logs")
     ResponseEntity<BuyLogResponse> getProductBuyLogs(@PathVariable Integer id) { // test passed
         return ResponseEntity.ok(service.getProductBuyLogs(id));
@@ -81,6 +83,23 @@ class ProductController {
             String value,
             @NotNull Attribute.DataType type,
             @NotNull Boolean mandatory
+    ) {
+    }
+
+    record ProductBuyRequest(
+            @NotNull @Min(1) Short quantity,
+            @NotNull BigDecimal buyPrice,
+            String supplier
+    ) {
+    }
+
+    record ProductBuyResponse(
+            int id,
+            String name,
+            short newQuantity,
+            BigDecimal lastBuyPrice,
+            String lastSupplier,
+            LocalDateTime timestamp
     ) {
     }
 

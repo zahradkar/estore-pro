@@ -31,7 +31,7 @@ class ProductService {
     }
 
     @Transactional
-    ProductBuyResponse buyProduct(Integer id, ProductBuyRequest dto) {
+    ProductController.ProductBuyResponse buyProduct(Integer id, ProductController.ProductBuyRequest dto) {
         var product = getProduct(id);
         product.increaseQuantity(dto.quantity());
 
@@ -66,7 +66,11 @@ class ProductService {
     }
 
     BuyLogResponse getProductBuyLogs(Integer productId) {
+        if (!productRepository.existsById(productId))
+            throw new EntityNotFoundException(PRODUCT_NOT_FOUND);
+
         List<BuyLog> productBuyLogs = buyLogRepository.getProductBuyLogs(productId);
+
         return buyLogMapper.toResponse(productBuyLogs);
     }
 }

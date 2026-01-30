@@ -31,7 +31,7 @@ interface ProductMapper {
     @Mapping(source = "product.quantity", target = "newQuantity")
     @Mapping(source = "buyLog.buyPrice", target = "lastBuyPrice")
     @Mapping(source = "buyLog.supplier", target = "lastSupplier")
-    ProductBuyResponse toProductBuyResponse(Product product, BuyLog buyLog);
+    ProductController.ProductBuyResponse toProductBuyResponse(Product product, BuyLog buyLog);
 
     @Mapping(expression = "java(toAttributes(dto.attributeDtos()))", target = "attributes")
     void update(ProductController.ProductWithAttribsDto dto, @MappingTarget Product product);
