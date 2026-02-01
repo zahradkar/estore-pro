@@ -1,16 +1,13 @@
 package eu.martin.store.products;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
-@AllArgsConstructor
-@Getter
 enum MeasureUnit {
-    KILOGRAM("KG"),
-    METRE("M"),
-    LITER("L"),
-    UNIT("KS"),
-    PACKAGE("BAL");
+    UNIT, // kus
+    PAIR,
+    SET,
+    BOX,
+    PACKAGE,
+    KG,
+    L, // liter
+    M, // meter
 
-    private final String code;
 }

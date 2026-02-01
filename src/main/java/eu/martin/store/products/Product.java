@@ -38,7 +38,8 @@ public class Product {
     private Integer quantity;
 
     @Setter
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "varchar(10)")
+    @Enumerated(EnumType.STRING)
     private MeasureUnit measureUnit;
 
     @ManyToMany(cascade = {PERSIST, MERGE})
