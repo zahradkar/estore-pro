@@ -38,7 +38,8 @@ class ProductService {
     @Transactional
     ProductController.ProductWithAttribsDto createProductWithAttributes(ProductController.ProductWithAttribsDto dto) {
         var product = productMapper.toProduct(dto);
-        product.setCategories(getCategories(dto.categorySummaries()));
+        if (dto.categorySummaries() != null)
+            product.setCategories(getCategories(dto.categorySummaries()));
 
         var createdProduct = productRepository.save(product);
 
@@ -80,7 +81,8 @@ class ProductService {
         var product = getProduct(dto.id());
 
         productMapper.update(dto, product);
-        product.setCategories(getCategories(dto.categorySummaries()));
+        if (dto.categorySummaries() != null)
+            product.setCategories(getCategories(dto.categorySummaries()));
 
         var updatedProduct = productRepository.save(product);
 
