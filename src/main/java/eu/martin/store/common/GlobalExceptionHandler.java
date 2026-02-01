@@ -5,10 +5,12 @@ import eu.martin.store.cart.ProductException;
 import eu.martin.store.cart.QuantityExceedException;
 import eu.martin.store.checkout.CartException;
 import eu.martin.store.email.MailException;
+import eu.martin.store.products.InvalidFormatException;
 import eu.martin.store.users.DuplicateUserException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
@@ -16,6 +18,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,42 +27,34 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
-    /*@ExceptionHandler(HandlerMethodValidationException.class)
-    ResponseEntity<Map<String, String>> handleHandlerMethodValidation2(HandlerMethodValidationException exception) {
-        var errors = new HashMap<String, String>();
+    /* @ExceptionHandler(HandlerMethodValidationException.class)
+     ResponseEntity<Map<String, String>> handleHandlerMethodValidation2(HandlerMethodValidationException exception) {
+         var errors = new HashMap<String, String>();
 
-        for (var validationResult : exception.getParameterValidationResults()) {
-            validationResult.getResolvableErrors().forEach(messageSourceResolvable -> System.out.println("arguments: " + Arrays.toString(messageSourceResolvable.getArguments())));
-            validationResult.getResolvableErrors().forEach(messageSourceResolvable -> System.out.println("default message: " + messageSourceResolvable.getDefaultMessage()));
-            System.out.println("------");
-        }
+         for (var validationResult : exception.getParameterValidationResults()) {
+             validationResult.getResolvableErrors().forEach(messageSourceResolvable -> System.out.println("arguments: " + Arrays.toString(messageSourceResolvable.getArguments())));
+             validationResult.getResolvableErrors().forEach(messageSourceResolvable -> System.out.println("default message: " + messageSourceResolvable.getDefaultMessage()));
+             System.out.println("------");
+         }
 
 
-        return ResponseEntity.badRequest().body(errors);
-    }*/
-/*
+         return ResponseEntity.badRequest().body(errors);
+     }*/
     @ExceptionHandler(HandlerMethodValidationException.class)
     public ProblemDetail handleMethodValidationException2(HandlerMethodValidationException ex) {
-        // Create the Problem Detail object
-        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(
-                HttpStatus.BAD_REQUEST,
-                "Validation Failed"
-        );
+        ProblemDetail problemDetail = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Validation Failed");
 
-        problemDetail.setType(URI.create("about:blank"));
-        problemDetail.setTitle("Method Argument Validation Failed");
-
-        // Extract errors
         var errors = ex.getParameterValidationResults().stream()
                 .flatMap(res -> res.getResolvableErrors().stream()
                         .map(err -> res.getMethodParameter().getParameterName() + " " + err.getDefaultMessage()))
                 .toList();
 
+        problemDetail.setTitle("Method Argument Validation Failed");
         problemDetail.setProperty("errors", errors);
 
         return problemDetail;
     }
-*/
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException exception) {
         var errors = new HashMap<String, String>();
@@ -79,7 +74,7 @@ class GlobalExceptionHandler {
         return ResponseEntity.status(NOT_FOUND).body(ex.getMessage());
     }
 
-    @ExceptionHandler({ItemNotFoundException.class, DuplicateUserException.class, QuantityExceedException.class, CartException.class, ProductException.class, HttpMessageNotReadableException.class, IllegalArgumentException.class, PropertyReferenceException.class})
+    @ExceptionHandler({ItemNotFoundException.class, DuplicateUserException.class, QuantityExceedException.class, CartException.class, ProductException.class, HttpMessageNotReadableException.class, IllegalArgumentException.class, PropertyReferenceException.class, InvalidFormatException.class})
     ResponseEntity<ErrorMessage> handleBadRequests(Exception ex) {
         return ResponseEntity.badRequest().body(new ErrorMessage(ex.getMessage()));
     }

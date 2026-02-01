@@ -9,6 +9,7 @@ public final class Utils {
     public static final String PRODUCT_NOT_FOUND = "Product not found!";
     public static final String ORDER_NOT_FOUND = "Order not found!";
     public static final String FAILED_AUTHORIZATION = "Error: You are not authorized for this action!";
+    public static final String CATEGORY_NOT_FOUND = "Category not found!";
 
     private Utils() {
     }

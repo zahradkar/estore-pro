@@ -41,7 +41,23 @@ public class Product {
     @Column(nullable = false)
     private MeasureUnit measureUnit;
 
+    @ManyToMany(cascade = {PERSIST, MERGE})
+    @JoinTable(
+            name = "product_categories",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private Set<Category> categories = new HashSet<>();
+
     void increaseQuantity(short quantity) {
         this.quantity += quantity;
+    }
+
+    void setCategories(Set<Category> categories) {
+        this.categories = new HashSet<>(categories);
+    }
+
+    void removeCategory(Category category) {
+        this.categories.remove(category);
     }
 }

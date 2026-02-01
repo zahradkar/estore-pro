@@ -1,5 +1,5 @@
 # todo the following:
-- category filtering and searching ?
+
 - testing ?
 - review this document
 
@@ -12,7 +12,7 @@ architecture and secure authentication integration.
 
 ## 🚀 Key Features
 
-* **Product Management:** Full CRUD operations (upcoming category filtering and search)
+* **Product Management:** Full CRUD operations with category filtering and search
 * **Secure Auth:** JWT-based authentication and role-based access control (RBAC).
 * **Shopping Cart:** Persistent cart logic with real-time stock validation.
 * **Order Processing:** Automated invoice generation and order status tracking.
@@ -30,7 +30,6 @@ architecture and secure authentication integration.
 | **Security**   | Spring Security & JWT       |
 | **ORM**        | Spring Data JPA (Hibernate) |
 | **Build Tool** | Gradle                      |
-| **Testing**    | JUnit 5 & Mockito           |
 
 ---
 
@@ -61,9 +60,10 @@ architecture and secure authentication integration.
 
 2. **Configure** <br>
     1. Rename `.env.example` to `.env` and set appropriate values to all fields. (for `MAIL_PASSWORD` property read next step)
-    2. The application is configured for sending e-mail from Gmail account so, in order to work properly, is necessary in gmail account:
-       - enable 2-factor authentication
-       - set password for the application and then set it to `MAIL_PASSWORD` property in `.env` file.
+    2. The application is configured for sending e-mail from Gmail account so, in order to work properly, is necessary in your gmail account to:
+        - enable 2-factor authentication
+        - set password for the application and then set it to `MAIL_PASSWORD` property in `.env` file. Password has the following
+          pattern: `ygkh kdjv zbvl icma`
     3. Create MySQL database called `store` OR in `src/main/resources/application.yml` update url to your needs. Example:
 
     ```yaml

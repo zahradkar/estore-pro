@@ -1,5 +1,6 @@
 package eu.martin.store.products;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
@@ -9,8 +10,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.math.BigDecimal;
@@ -53,7 +56,7 @@ class ProductController {
     @PutMapping
     ResponseEntity<ProductWithAttribsDto> updateProduct(@RequestBody @Valid ProductController.ProductWithAttribsDto dto) { // test passed
         // used also for adding/removing attributes to/from Product
-        return ResponseEntity.ok(service.update(dto));
+        return ResponseEntity.ok(service.updateProduct(dto));
     }
 
     @Operation(summary = "Returns buy logs of given product.")
@@ -71,11 +74,45 @@ class ProductController {
             @RequestParam(required = false) BigDecimal minPrice,
             @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) String attributeName,
+            @RequestParam(required = false) String categoryName,
             @Parameter(description = "[id, name, description, sellPrice, quantity, measureUnit]")
             @RequestParam(required = false) String sortBy,
             @RequestParam(required = false) boolean descending) { // test passed
 
-        return ResponseEntity.ok().body(service.getSortedProductsBySpecification(pageNumber, pageSize, name, minPrice, maxPrice, attributeName, sortBy, descending));
+        return ResponseEntity.ok(service.getSortedProductsBySpecification(pageNumber, pageSize, name, minPrice, maxPrice, attributeName, categoryName, sortBy, descending));
+    }
+
+    @Operation(summary = "Creates category.")
+    @PostMapping("/category")
+    ResponseEntity<CategoryDto> createCategory(@RequestBody @Valid CategoryDto dto, UriComponentsBuilder uriBuilder) {
+        var result = service.createCategory(dto);
+
+        var uri = uriBuilder.path(productPath + "/category/{id}").buildAndExpand(result.id).toUri();
+
+        return ResponseEntity.created(uri).body(result);
+    }
+
+    @Operation(summary = "Returns category by ID.")
+    @GetMapping("/category/{id}")
+    ResponseEntity<CategoryDto> getCategory(@PathVariable @Min(1) @Max(1_000) Short id) {
+        return ResponseEntity.ok(service.getCategory(id));
+    }
+
+    @Operation(summary = "Updates category by ID.")
+    @PutMapping("/category")
+    ResponseEntity<CategoryDto> updateCategory(@RequestBody CategoryDto dto) {
+        return ResponseEntity.ok(service.updateCategory(dto));
+    }
+
+    @Operation(summary = "Saves categorySummaries (Accepts a JSON file structured as a tree of categorySummaries).")
+    @PostMapping(value = "/categories/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    ResponseEntity<String> importCategories(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty())
+            return ResponseEntity.badRequest().body("File cannot be empty");
+
+        service.importCategories(file);
+
+        return ResponseEntity.ok("Categories imported successfully");
     }
 
     record ProductWithAttribsDto(
@@ -85,8 +122,14 @@ class ProductController {
             @NotNull BigDecimal sellPrice,
             @NotNull Integer quantity,
             @NotNull MeasureUnit measureUnit,
+            Set<@Valid CategorySummary> categorySummaries,
             Set<@Valid AttributeDto> attributeDtos
     ) {
+        record CategorySummary(
+           @NotNull @Min(1) Short id,
+           String name
+        ) {
+        }
     }
 
     record AttributeDto(
@@ -121,6 +164,22 @@ class ProductController {
             BigDecimal sellPrice,
             int quantity,
             Set<AttributeDto> attributes
+    ) {
+    }
+
+    record CategoryDto(
+            Short id,
+            @NotBlank String name,
+            String description,
+            Category parent
+    ) {
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    record CategoryImportDto(
+            String name,
+            String description,
+            List<CategoryImportDto> children
     ) {
     }
 }

@@ -12,7 +12,8 @@ interface ProductMapper {
 
     // handles requests
     @Mapping(expression = "java(toAttributes(dto.attributeDtos()))", target = "attributes")
-    Product toProduct(ProductController.ProductWithAttribsDto dto);
+    @Mapping(ignore = true, target = "categories")
+    Product toProduct(ProductController.ProductWithAttribsDto dto); // categories are mapped manually
 
     Attribute toAttribute(ProductController.AttributeDto dto);
 
@@ -21,6 +22,7 @@ interface ProductMapper {
 
     // handles responses
     @Mapping(expression = "java(toAttributeDtos(product.getAttributes()))", target = "attributeDtos")
+    @Mapping(source = "categories", target = "categorySummaries")
     ProductController.ProductWithAttribsDto toProductWithAttributesDto(Product product);
 
     ProductController.AttributeDto toAttributeDto(Attribute attribute);
@@ -35,8 +37,14 @@ interface ProductMapper {
     ProductController.ProductBuyResponse toProductBuyResponse(Product product, BuyLog buyLog);
 
     @Mapping(expression = "java(toAttributes(dto.attributeDtos()))", target = "attributes")
-    void update(ProductController.ProductWithAttribsDto dto, @MappingTarget Product product);
+    @Mapping(ignore = true, target = "categories")
+    void update(ProductController.ProductWithAttribsDto dto, @MappingTarget Product product);  // categories are mapped manually
 
     List<ProductController.ProductSpecsResponse> toSpecsResponse(List<Product> specificProducts);
 
+    Category toCategory(ProductController.CategoryDto dto);
+
+    ProductController.CategoryDto toCategoryDto(Category category);
+
+    void update(ProductController.CategoryDto dto, @MappingTarget Category category);
 }
