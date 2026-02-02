@@ -1,7 +1,3 @@
-# todo the following:
-
-- testing ?
-- review this document
 
 # 🛒 E-Store Pro: Demo E-Commerce Backend
 
@@ -14,8 +10,7 @@ architecture and secure authentication integration.
 
 * **Product Management:** Full CRUD operations with category filtering and search
 * **Secure Auth:** JWT-based authentication and role-based access control (RBAC).
-* **Shopping Cart:** Persistent cart logic with real-time stock validation.
-* **Order Processing:** Automated invoice generation and order status tracking.
+* **Shopping Cart:** Persistent cart logic with stock validation.
 * **Documentation:** Fully interactive API docs via Swagger/OpenAPI.
 
 ---
@@ -30,6 +25,7 @@ architecture and secure authentication integration.
 | **Security**   | Spring Security & JWT       |
 | **ORM**        | Spring Data JPA (Hibernate) |
 | **Build Tool** | Gradle                      |
+
 
 ---
 
