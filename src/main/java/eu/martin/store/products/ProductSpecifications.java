@@ -26,7 +26,7 @@ record ProductSpecifications() {
         };
     }
 
-    public static Specification<Product> hasCategory(String categoryName) {
+    static Specification<Product> hasCategory(String categoryName) {
         return (root, query, criteriaBuilder) -> {
             Join<Product, Category> categoryJoin = root.join("categories");
             return criteriaBuilder.like(categoryJoin.get("name"), "%" + categoryName + "%");
