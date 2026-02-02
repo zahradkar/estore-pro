@@ -14,10 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -153,7 +150,7 @@ class ProductService {
         try {
             var categoryTree = jsonMapper.readValue(
                     file.getInputStream(),
-                    new TypeReference<List<ProductController.CategoryImportDto>>() {
+                    new TypeReference<List<ProductController.CategoryTreeDto>>() {
                     }
             );
 
@@ -163,8 +160,33 @@ class ProductService {
         }
     }
 
+    List<ProductController.CategoryTreeDto> getCategories() {
+        var allCategories = categoryRepository.findAll();
+
+        var lookup = allCategories.stream()
+                .collect(Collectors.toMap(
+                        Category::getId,
+                        cat -> new ProductController.CategoryTreeDto(cat.getName(), cat.getDescription(), new ArrayList<>())
+                ));
+
+        var rootNodes = new ArrayList<ProductController.CategoryTreeDto>();
+
+        for (var cat : allCategories) {
+            var dto = lookup.get(cat.getId());
+            if (cat.getParent() == null)
+                rootNodes.add(dto);
+             else {
+                var parentDto = lookup.get(cat.getParent().getId());
+                if (parentDto != null)
+                    parentDto.children().add(dto);
+            }
+        }
+
+        return rootNodes;
+    }
+
     // due to optimization of database calls, used Breadth-First Traversal (Level by Level)
-    private void processCategories(List<ProductController.CategoryImportDto> rootDtos) {
+    private void processCategories(List<ProductController.CategoryTreeDto> rootDtos) {
         if (rootDtos == null || rootDtos.isEmpty())
             return;
 
@@ -211,7 +233,7 @@ class ProductService {
     }
 
     private record ProcessingNode(
-            ProductController.CategoryImportDto dto,
+            ProductController.CategoryTreeDto dto,
             Category parent
     ) {
     }

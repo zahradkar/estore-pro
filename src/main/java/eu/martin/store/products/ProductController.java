@@ -1,6 +1,5 @@
 package eu.martin.store.products;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.Valid;
@@ -115,6 +114,12 @@ class ProductController {
         return ResponseEntity.ok("Categories imported successfully");
     }
 
+    @Operation(summary = "Returns categories (category tree).")
+    @GetMapping("/categories")
+    ResponseEntity<List<CategoryTreeDto>> getCategories() {
+        return ResponseEntity.ok(service.getCategories());
+    }
+
     record ProductWithAttribsDto(
             Integer id,
             @NotBlank String name,
@@ -126,8 +131,8 @@ class ProductController {
             Set<@Valid AttributeDto> attributeDtos
     ) {
         record CategorySummary(
-           @NotNull @Min(1) Short id,
-           String name
+                @NotNull @Min(1) Short id,
+                String name
         ) {
         }
     }
@@ -175,11 +180,10 @@ class ProductController {
     ) {
     }
 
-    @JsonIgnoreProperties(ignoreUnknown = true)
-    record CategoryImportDto(
+    record CategoryTreeDto(
             String name,
             String description,
-            List<CategoryImportDto> children
+            List<CategoryTreeDto> children
     ) {
     }
 }
