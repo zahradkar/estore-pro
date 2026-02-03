@@ -1,7 +1,5 @@
 package eu.martin.store.products;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,10 +9,16 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -148,14 +152,11 @@ class ProductService {
     @Transactional
     void importCategories(MultipartFile file) {
         try {
-            var categoryTree = jsonMapper.readValue(
-                    file.getInputStream(),
-                    new TypeReference<List<ProductController.CategoryTreeDto>>() {
-                    }
-            );
+            var categoryTree = jsonMapper.readValue(file.getInputStream(), new TypeReference<List<ProductController.CategoryTreeDto>>() {
+            });
 
             processCategories(categoryTree);
-        } catch (IOException e) {
+        } catch (JacksonException | IOException e) {
             throw new InvalidFormatException("Failed to parse category file: " + e.getMessage());
         }
     }
@@ -175,7 +176,7 @@ class ProductService {
             var dto = lookup.get(cat.getId());
             if (cat.getParent() == null)
                 rootNodes.add(dto);
-             else {
+            else {
                 var parentDto = lookup.get(cat.getParent().getId());
                 if (parentDto != null)
                     parentDto.children().add(dto);
