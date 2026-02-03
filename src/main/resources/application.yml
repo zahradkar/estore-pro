@@ -34,7 +34,6 @@ app:
   base-uri: http://localhost:8080
   api: /api
   user-path: ${app.api}/users
-  admin-path: ${app.api}/admin
   auth-path: ${app.api}/auth
   product-path: ${app.api}/products
   cart-path: ${app.api}/carts

@@ -11,7 +11,7 @@ import lombok.ToString;
 @Getter
 @Entity
 @Table(name = "addresses")
-public class Address {
+class Address {
     @EqualsAndHashCode.Include
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

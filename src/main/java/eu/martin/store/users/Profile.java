@@ -9,7 +9,7 @@ import java.time.LocalDate;
 @Getter
 @Entity
 @Table(name = "profiles")
-public class Profile {
+class Profile {
     @Id
     @Column(name = "id", nullable = false)
     private Long id;
