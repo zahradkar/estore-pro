@@ -76,9 +76,9 @@ class ProductController {
             @RequestParam(required = false) String categoryName,
             @Parameter(description = "[id, name, description, sellPrice, quantity, measureUnit]")
             @RequestParam(required = false) String sortBy,
-            @RequestParam(required = false) boolean descending) { // test passed
+            @RequestParam(required = false) Boolean descending) { // test passed
 
-        return ResponseEntity.ok(service.getSortedProductsBySpecification(pageNumber, pageSize, name, minPrice, maxPrice, attributeName, categoryName, sortBy, descending));
+        return ResponseEntity.ok(service.getSortedProductsBySpecification(new SpecificationRequest(pageNumber, pageSize, name, minPrice, maxPrice, attributeName, categoryName, sortBy, descending)));
     }
 
     @Operation(summary = "Creates category.")

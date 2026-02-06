@@ -14,7 +14,6 @@ import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -99,29 +98,29 @@ class ProductService {
         return buyLogMapper.toResponse(productBuyLogs);
     }
 
-    List<ProductController.ProductSpecsResponse> getSortedProductsBySpecification(short pageNumber, short pageSize, String name, BigDecimal minPrice, BigDecimal maxPrice, String attributeName, String categoryName, String productProperty, boolean descending) {
+    List<ProductController.ProductSpecsResponse> getSortedProductsBySpecification(SpecificationRequest request) {
         var specification = new ArrayList<Specification<Product>>(5);
         Sort sort;
 
-        if (name != null)
-            specification.add(ProductSpecifications.hasName(name));
-        if (minPrice != null)
-            specification.add(ProductSpecifications.hasPriceGreaterThanOrEqualTo(minPrice));
-        if (maxPrice != null)
-            specification.add(ProductSpecifications.hasPriceLessThanOrEqualTo(maxPrice));
-        if (attributeName != null)
-            specification.add(ProductSpecifications.hasAttribute(attributeName));
-        if (categoryName != null)
-            specification.add(ProductSpecifications.hasCategory(categoryName));
+        if (request.name() != null)
+            specification.add(ProductSpecifications.hasName(request.name()));
+        if (request.minPrice() != null)
+            specification.add(ProductSpecifications.hasPriceGreaterThanOrEqualTo(request.minPrice()));
+        if (request.maxPrice() != null)
+            specification.add(ProductSpecifications.hasPriceLessThanOrEqualTo(request.maxPrice()));
+        if (request.attributeName() != null)
+            specification.add(ProductSpecifications.hasAttribute(request.attributeName()));
+        if (request.categoryName() != null)
+            specification.add(ProductSpecifications.hasCategory(request.categoryName()));
 
-        if (productProperty == null)
+        if (request.productProperty() == null)
             sort = Sort.unsorted();
-        else if (descending)
-            sort = Sort.by(productProperty).descending();
+        else if (request.descending() != null && request.descending())
+            sort = Sort.by(request.productProperty()).descending();
         else
-            sort = Sort.by(productProperty);
+            sort = Sort.by(request.productProperty());
 
-        var sortedProductsBySpecification = productRepository.findAll(Specification.allOf(specification), PageRequest.of(pageNumber, pageSize, sort)).getContent();
+        var sortedProductsBySpecification = productRepository.findAll(Specification.allOf(specification), PageRequest.of(request.pageNumber(), request.pageSize(), sort)).getContent();
 
         return productMapper.toSpecsResponse(sortedProductsBySpecification);
     }
@@ -159,31 +158,6 @@ class ProductService {
         } catch (JacksonException | IOException e) {
             throw new InvalidFormatException("Failed to parse category file: " + e.getMessage());
         }
-    }
-
-    List<ProductController.CategoryTreeDto> getCategories() {
-        var allCategories = categoryRepository.findAll();
-
-        var lookup = allCategories.stream()
-                .collect(Collectors.toMap(
-                        Category::getId,
-                        cat -> new ProductController.CategoryTreeDto(cat.getName(), cat.getDescription(), new ArrayList<>())
-                ));
-
-        var rootNodes = new ArrayList<ProductController.CategoryTreeDto>();
-
-        for (var cat : allCategories) {
-            var dto = lookup.get(cat.getId());
-            if (cat.getParent() == null)
-                rootNodes.add(dto);
-            else {
-                var parentDto = lookup.get(cat.getParent().getId());
-                if (parentDto != null)
-                    parentDto.children().add(dto);
-            }
-        }
-
-        return rootNodes;
     }
 
     // due to optimization of database calls, used Breadth-First Traversal (Level by Level)
@@ -231,6 +205,31 @@ class ProductService {
 
             currentLevel = nextLevel;
         }
+    }
+
+    List<ProductController.CategoryTreeDto> getCategories() {
+        var allCategories = categoryRepository.findAll();
+
+        var lookup = allCategories.stream()
+                .collect(Collectors.toMap(
+                        Category::getId,
+                        cat -> new ProductController.CategoryTreeDto(cat.getName(), cat.getDescription(), new ArrayList<>())
+                ));
+
+        var rootNodes = new ArrayList<ProductController.CategoryTreeDto>();
+
+        for (var cat : allCategories) {
+            var dto = lookup.get(cat.getId());
+            if (cat.getParent() == null)
+                rootNodes.add(dto);
+            else {
+                var parentDto = lookup.get(cat.getParent().getId());
+                if (parentDto != null)
+                    parentDto.children().add(dto);
+            }
+        }
+
+        return rootNodes;
     }
 
     private record ProcessingNode(
