@@ -5,20 +5,21 @@ import eu.martin.store.cart.CartRepository;
 import eu.martin.store.cart.CartService;
 import eu.martin.store.orders.Order;
 import eu.martin.store.orders.OrderRepository;
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static eu.martin.store.common.Utils.CART_IS_EMPTY;
 import static eu.martin.store.common.Utils.CART_NOT_FOUND;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Service
 class CheckoutService {
     private final CartRepository cartRepository;
     private final OrderRepository orderRepository;
     private final AuthService authService;
     private final CartService cartService;
+    private final PaymentGateway paymentGateway;
 
     @Transactional
     CheckoutResponse checkout(CheckoutRequest request) {
@@ -31,8 +32,25 @@ class CheckoutService {
 
         orderRepository.save(order);
 
-        cartService.clearCart(cart.getId());
+        try {
+            var session = paymentGateway.createCheckoutSession(order);
 
-        return new CheckoutResponse(order.getId());
+            cartService.clearCart(cart.getId());
+
+            return new CheckoutResponse(order.getId(), session.checkoutUrl());
+        } catch (PaymentException exception) {
+            orderRepository.delete(order);
+            throw exception;
+        }
+    }
+
+    void handleWebhookEvent(WebhookRequest request) {
+        paymentGateway
+                .parseWebhookRequest(request)
+                .ifPresent(paymentResult -> {
+                    var order = orderRepository.findById(paymentResult.orderId()).orElseThrow();
+                    order.setStatus(paymentResult.paymentStatus());
+                    orderRepository.save(order);
+                });
     }
 }

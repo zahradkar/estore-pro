@@ -1,4 +1,4 @@
 package eu.martin.store.checkout;
 
-record CheckoutResponse(long orderId) {
+record CheckoutResponse(long orderId, String checkoutUrl) {
 }

@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @Entity
 @Table(name = "order_items")
 @NoArgsConstructor
-class OrderItem {
+public class OrderItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

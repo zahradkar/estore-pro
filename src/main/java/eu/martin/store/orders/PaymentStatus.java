@@ -1,6 +1,6 @@
 package eu.martin.store.orders;
 
-enum PaymentStatus {
+public enum PaymentStatus {
     PENDING,
     PAID,
     FAILED,

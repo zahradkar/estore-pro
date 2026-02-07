@@ -4,6 +4,7 @@ import eu.martin.store.cart.ItemNotFoundException;
 import eu.martin.store.cart.ProductException;
 import eu.martin.store.cart.QuantityExceedException;
 import eu.martin.store.checkout.CartException;
+import eu.martin.store.checkout.PaymentException;
 import eu.martin.store.email.MailException;
 import eu.martin.store.products.InvalidFormatException;
 import eu.martin.store.users.DuplicateUserException;
@@ -87,5 +88,10 @@ class GlobalExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<String> handleBadCredentials(BadCredentialsException exception) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(exception.getMessage());
+    }
+
+    @ExceptionHandler(PaymentException.class)
+    public ResponseEntity<ErrorMessage> handlePaymentException() {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorMessage("Error creating a checkout session"));
     }
 }

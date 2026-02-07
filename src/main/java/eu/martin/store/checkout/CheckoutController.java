@@ -2,10 +2,9 @@ package eu.martin.store.checkout;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RestController
@@ -16,5 +15,10 @@ class CheckoutController {
     @PostMapping
     CheckoutResponse checkout(@RequestBody @Valid CheckoutRequest request) {
         return checkoutService.checkout(request);
+    }
+
+    @PostMapping("/webhook")
+    public void handleWebhook(@RequestHeader Map<String, String> headers, @RequestBody String payload) {
+        checkoutService.handleWebhookEvent(new WebhookRequest(headers, payload));
     }
 }
